@@ -1,0 +1,40 @@
+# Creates a bot from the kit (with and without the Mini App) and runs its tests,
+# so a change to the template or the scaffold can't silently break new bots.
+name: Test the kit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tgcloud-kit/**'
+      - 'scripts/**'
+      - '.github/workflows/kit.yml'
+  pull_request:
+    paths:
+      - 'tgcloud-kit/**'
+      - 'scripts/**'
+      - '.github/workflows/kit.yml'
+  workflow_dispatch: {}
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        variant: [bot, mini-app]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # `tgcloud init` makes the bot's first git commit.
+      - run: |
+          git config --global user.name "kit-ci"
+          git config --global user.email "kit-ci@users.noreply.github.com"
+          git config --global init.defaultBranch main
+      - name: Create a bot and run its tests
+        run: node scripts/create-bot.mjs "$RUNNER_TEMP/bot" --admin 123456789 ${{ matrix.variant == 'mini-app' && '--mini-app' || '' }}
+      - name: Build the Mini App
+        if: matrix.variant == 'mini-app'
+        working-directory: ${{ runner.temp }}/bot
+        run: npm run build
