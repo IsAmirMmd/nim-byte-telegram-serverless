@@ -407,7 +407,11 @@ function Footer({ t }) {
   return (
     <footer className="footer">
       <div className="container footer__inner">
-        <span>{t.footer.by} <a href="https://github.com/IsAmirMmd">IsAmirMmd</a></span>
+        <span>
+          {t.footer.by} <bdi><a href="https://github.com/IsAmirMmd">IsAmirMmd</a></bdi>
+          {' · '}
+          <bdi><a href="https://nimbyte.ir">nimbyte</a></bdi>
+        </span>
         <span className="footer__links">
           <a href={REPO_URL}>{t.footer.repo}</a>
           <a href="https://core.telegram.org/bots/serverless">{t.footer.docs}</a>
