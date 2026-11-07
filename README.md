@@ -284,6 +284,10 @@ npm --prefix site run dev
 
 متن‌های سایت (فارسی و انگلیسی) در `site/src/content.js` هستند. در فورک‌ها هم همین تنظیم Pages کافی است، چون سایت با مسیر نسبی ساخته می‌شود.
 
+## لایسنس
+
+[MIT](LICENSE). استفاده، تغییر، فورک و انتشار آزاد است، چه شخصی و چه تجاری. فقط متن لایسنس و نام سازنده را در کپی‌ها نگه دارید.
+
 </div>
 
 ---
@@ -328,3 +332,5 @@ Then send `/start` to the bot and set its commands in BotFather (`/setcommands`)
 **Admin tools are built only on request.** The template has no admin routes or commands (no `/api/sql`, `/stats`, `/backup`, admin panel or cron job). Ask your agent ("add `npm run sql`", "add `/stats` and `/backup`", "build an admin panel", "send me a report every morning") and it follows [`admin-tools.md`](tgcloud-kit/skills/tgcloud-bot/references/admin-tools.md): `requireAdmin` first, a refused-caller test, failures reported to the admin. Once added: `npm run sql -- "SELECT * FROM users LIMIT 5"`.
 
 **Guide site:** `site/` (React + Vite). Enable it once with Settings → Pages → Source: GitHub Actions; `pages.yml` deploys it on every push to `main`.
+
+**License:** [MIT](LICENSE). Use, change, fork and publish it freely, personally or commercially; keep the license text and copyright notice in copies.

@@ -1,8 +1,19 @@
 {
   "name": "tgcloud-kit",
   "description": "Build Telegram bots and Mini Apps on Telegram Serverless (tgcloud) with an AI agent: a scaffold with a production architecture, offline tests and CI deploy, endpoint and Mini App guides, and admin tools (npm run sql, admin commands, an admin panel, scheduled jobs) built only on request.",
-  "author": { "name": "IsAmirMmd" },
+  "author": {
+    "name": "IsAmirMmd"
+  },
   "homepage": "https://isamirmmd.github.io/nim-byte-telegram-serverless/",
   "repository": "https://github.com/IsAmirMmd/nim-byte-telegram-serverless",
-  "keywords": ["telegram", "bot", "serverless", "tgcloud", "mini-app", "ai-agents", "persian"]
+  "license": "MIT",
+  "keywords": [
+    "telegram",
+    "bot",
+    "serverless",
+    "tgcloud",
+    "mini-app",
+    "ai-agents",
+    "persian"
+  ]
 }

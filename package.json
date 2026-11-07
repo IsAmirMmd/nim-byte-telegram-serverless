@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "tgcloud-kit: skills, a scaffold and a guide for building Telegram bots on Telegram Serverless with AI agents.",
+  "license": "MIT",
   "type": "module",
   "bin": {
     "create-tgcloud-bot": "scripts/create-bot.mjs"
