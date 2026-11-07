@@ -1,4 +1,24 @@
+<div align="center">
+
 # tgcloud-kit: Telegram serverless bots with AI agents
+
+[![GitHub stars](https://img.shields.io/github/stars/IsAmirMmd/nim-byte-telegram-serverless?style=for-the-badge&logo=github&color=f5c518)](https://github.com/IsAmirMmd/nim-byte-telegram-serverless/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/IsAmirMmd/nim-byte-telegram-serverless?style=for-the-badge&logo=github)](https://github.com/IsAmirMmd/nim-byte-telegram-serverless/network/members)
+[![License: MIT](https://img.shields.io/github/license/IsAmirMmd/nim-byte-telegram-serverless?style=for-the-badge&color=blue)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/IsAmirMmd/nim-byte-telegram-serverless?style=for-the-badge)](https://github.com/IsAmirMmd/nim-byte-telegram-serverless/commits/main)
+
+[![Test the kit](https://img.shields.io/github/actions/workflow/status/IsAmirMmd/nim-byte-telegram-serverless/kit.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=kit%20tests)](https://github.com/IsAmirMmd/nim-byte-telegram-serverless/actions/workflows/kit.yml)
+[![Deploy site](https://img.shields.io/github/actions/workflow/status/IsAmirMmd/nim-byte-telegram-serverless/pages.yml?branch=main&style=for-the-badge&logo=githubpages&logoColor=white&label=site)](https://isamirmmd.github.io/nim-byte-telegram-serverless/)
+[![Guide](https://img.shields.io/badge/guide-website-5157e8?style=for-the-badge)](https://isamirmmd.github.io/nim-byte-telegram-serverless/)
+
+[![Telegram Serverless](https://img.shields.io/badge/Telegram-Serverless-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://core.telegram.org/bots/serverless)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757?style=for-the-badge&logo=claude&logoColor=white)](tgcloud-kit/)
+[![AGENTS.md](https://img.shields.io/badge/AGENTS.md-Codex%20%C2%B7%20Cursor%20%C2%B7%20Gemini%20%C2%B7%20Copilot-111111?style=for-the-badge)](AGENTS.md)
+[![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A522.12-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
+
+</div>
 
 <div dir="rtl">
 
