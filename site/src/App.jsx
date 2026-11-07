@@ -102,12 +102,17 @@ function Code({ code, t }) {
   );
 }
 
-// A request typed to an agent: in the reader's language, so the direction follows the text.
+// The direction of a text from its first letter: a slash command or an English
+// request reads left to right even on the Persian page.
+const dirOf = (text) => (/^[^A-Za-z\u0600-\u06FF]*[\u0600-\u06FF]/.test(text) ? 'rtl' : 'ltr');
+
+// A request typed to an agent.
 function Prompt({ text, t }) {
+  const dir = dirOf(text);
   return (
-    <div className="prompt">
+    <div className={`prompt prompt--${dir}`}>
       <span className="prompt__mark" aria-hidden="true">›</span>
-      <p dir="auto">{text}</p>
+      <p dir={dir}>{text}</p>
       <CopyButton text={text} t={t} />
     </div>
   );
