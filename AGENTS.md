@@ -28,7 +28,12 @@ Bots made with it live in their own folders and their own git repositories.
    front-end: [`tgcloud-mini-app`](tgcloud-kit/skills/tgcloud-mini-app/SKILL.md).
 5. **Never ask for a token in the chat.** The user runs `npx tgcloud login`
    themselves and pastes the CLI token there.
-6. **Admin tools only on request.** The template has no admin routes or admin
+6. **Design system.** When the bot gets a Mini App, ask the user which design
+   system to use: **Default** (Telegram's theme) or **their own** (they type or
+   link it). Don't choose for them. How to apply each is in
+   [`tgcloud-mini-app`](tgcloud-kit/skills/tgcloud-mini-app/SKILL.md) Step 1b;
+   the choice is saved in the bot's `docs/DESIGN.md`.
+7. **Admin tools only on request.** The template has no admin routes or admin
    commands. Add `npm run sql`, `/stats`, `/backup`, an admin panel, scheduled
    jobs or secrets only when the user asks, following
    [`references/admin-tools.md`](tgcloud-kit/skills/tgcloud-bot/references/admin-tools.md).

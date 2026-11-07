@@ -34,7 +34,7 @@
 |---|---|
 | **tgcloud-bot** (نقطه‌ی شروع) | یک پوشه‌ی خالی را به یک ربات کامل تبدیل می‌کند: ساختار `tgcloud/` (schema، یک lib برای هر ویژگی، handler و endpoint سبک)، ثبت کاربران، `/stop` و تشخیص بلاک، منوی `/start`، دیپ‌لینک، سؤال‌وجواب چندمرحله‌ای، ارسال نظر به ادمین، تست آفلاین با SDK شبیه‌سازی‌شده و دیپلوی خودکار با GitHub Actions |
 | **tgcloud-endpoints** | مرجع کامل endpointهای مینی‌اپ (`POST /api/<name>`): احراز هویت با `ctx.initData`، خطا، صفحه‌بندی، جستجو، محدودیت درخواست و تست |
-| **tgcloud-mini-app** | مینی‌اپ React + Vite که رنگ‌هایش را از تم خود تلگرام می‌گیرد، همراه با تنظیم `tgcloud.jsonc` و دیپلوی |
+| **tgcloud-mini-app** | مینی‌اپ React + Vite، همراه با تنظیم `tgcloud.jsonc` و دیپلوی. موقع راه‌اندازی، ایجنت می‌پرسد با کدام دیزاین سیستم کار کنید: **پیش‌فرض** (رنگ‌های تم خود تلگرام) یا **دیزاین سیستم خودتان** (لینک سایت یا فیگما، فایل CSS، یک اسکیل دیزاین، کتابخانه‌ای مثل Tailwind یا یک توضیح ساده). انتخاب شما در `docs/DESIGN.md` ربات ذخیره می‌شود |
 
 `scripts/create-bot.mjs` هم همه‌ی مراحل ساخت را با یک دستور انجام می‌دهد، حتی بدون هوش مصنوعی.
 
@@ -319,6 +319,8 @@ npm --prefix site run dev
 **You need:** Node.js 22.12+, access to Telegram Serverless, the bot's **CLI Access → Access token** from BotFather, and your numeric Telegram id (@userinfobot).
 
 Serverless isn't open to everyone yet. Request access first: open the @BotFather Mini App, create a new bot, go to its **Serverless** section and request access there. Once BotFather messages you that your whitelist is open, you can use it.
+
+**Design system:** when a bot gets a Mini App, the agent asks which design system to use: **Default** (Telegram's own theme colors) or **your own** (a website or Figma link, a CSS/tokens file, a design-system skill, a UI library, or a description). The choice is saved in the bot's `docs/DESIGN.md`.
 
 **Claude Code plugin:**
 

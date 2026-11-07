@@ -27,6 +27,21 @@ Take them from `$ARGUMENTS` or the conversation. Ask only for what is missing:
   It receives the users' feedback, and any admin tool added later checks it.
 - **What the bot does**: the features. These decide whether it needs a
   **Mini App** (dashboards, forms, catalogs → `--mini-app`).
+- **Design system**, whenever the bot gets a Mini App (now, or later when one
+  is added): always ask, as a choice with two options:
+  - **Default**: the starter's look. It uses Telegram's own theme colors
+    (light, dark and custom themes, automatically) and the system font.
+    Nothing more to provide.
+  - **My own design system**: the user types or links it: a website or Figma
+    link, a CSS / design-tokens file, a design-system skill they have
+    installed, a UI library (Tailwind, MUI, …), or a description (colors,
+    font, corner radius, mood).
+
+  In Claude Code use AskUserQuestion with these two options; its free-text
+  answer carries the details of their own system. Other agents ask the same
+  two options in the chat. Don't pick for the user. After the scaffold, apply
+  the answer with the tgcloud-mini-app skill (Step 1b) and record it in
+  `docs/DESIGN.md` (the scaffold writes it as "Chosen by the user: not yet").
 - **Project folder**: default to the current directory when it's empty or
   already a tgcloud project. Never scaffold into the tgcloud-kit repository
   itself: if the current folder is the kit's repo, use a new sibling folder
@@ -70,6 +85,7 @@ only replaces the stock `init` versions of `schema.js` and
 - the React + Vite front-end: the user's profile and a feedback form, styled
   with Telegram's own theme colors;
 - `endpoints/feedback.js` (validated, throttled) and its tests;
+- `docs/DESIGN.md` (the default design, "Chosen by the user: not yet");
 - `tgcloud.jsonc` → `"static"`.
 
 **No admin routes or admin commands are scaffolded.** There is no `/api/sql`,

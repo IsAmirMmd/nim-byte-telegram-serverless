@@ -22,7 +22,7 @@ Source: https://core.telegram.org/bots/serverless#mini-app-front-end. Re-check i
 - Is there a front-end? Look at `package.json`, `vite.config.*` and `index.html`. If there's none, create one at the **project root**, next to `tgcloud/`, keeping the existing files.
 - Check `tgcloud.jsonc` → `"static"`.
 
-**The front-end is always React (Vite + `@vitejs/plugin-react`).** Never write a vanilla-JS UI. Style it with Telegram's own theme: `telegram-web-app.js` sets `--tg-theme-*` CSS variables (bg, text, hint, link, button, section…) from the user's theme and keeps them updated, so the app looks native in light, dark and custom themes. The starter's `src/app.css` maps them to a few app variables with fallbacks for the browser. Write endpoints with the `tgcloud-endpoints` skill.
+**The front-end is always React (Vite + `@vitejs/plugin-react`).** Never write a vanilla-JS UI. Its look follows the design system the user chose (Step 1b, `docs/DESIGN.md`). The default is Telegram's own theme: `telegram-web-app.js` sets `--tg-theme-*` CSS variables (bg, text, hint, link, button, section…) from the user's theme and keeps them updated, so the app looks native in light, dark and custom themes. The starter's `src/app.css` maps them to a few app variables with fallbacks for the browser. Write endpoints with the `tgcloud-endpoints` skill.
 
 **Fastest start:** the tgcloud-bot scaffold with `--mini-app` copies the starter in [assets/app/](assets/app/):
 - `index.html` and `vite.config.js`;
@@ -39,6 +39,32 @@ With the bot already scaffolded:
 `node "${CLAUDE_SKILL_DIR}/../tgcloud-bot/scripts/scaffold.mjs" . --admin <ADMIN_ID> --mini-app`
 
 The scaffold adds only the missing files. Build new pages on that starter rather than from scratch.
+
+## Step 1b: Design system
+
+`docs/DESIGN.md` is the project's design choice. If it records a choice the user made, follow it for every UI change and don't ask again. If it is missing, or still says **"Chosen by the user: not yet"** (the scaffold's default), **ask which design system to use**, as a choice:
+
+- **Default**: Telegram's own theme. Nothing to provide.
+- **My own design system**: they type or link it. In Claude Code, AskUserQuestion with these two options; the free-text answer carries the details.
+
+**Default.** Keep `src/app.css` as it is. New components use only its variables (`--bg`, `--section-bg`, `--text`, `--hint`, `--link`, `--button`, `--button-text`, `--destructive`, `--separator`, `--section-title`, `--radius`), never hard-coded colors. In `docs/DESIGN.md`, change "Chosen by the user: not yet" to "Chosen by the user: yes" (or write the file from the scaffold's version if it's missing).
+
+**Their own.** Turn what they gave into tokens, then wire them in:
+1. **Read the source.**
+   - A website or brand guide: WebFetch it and take the colors, fonts, sizes, radii, shadows and spacing from its CSS.
+   - Figma: use the Figma tools if they're connected; otherwise ask for exported tokens or screenshots.
+   - A CSS or tokens file: copy it into `src/styles/`.
+   - An installed design-system skill: load it and follow it.
+   - A UI library: `npm i` it in the front-end only (never in `tgcloud/`) and follow its setup for Vite + React.
+   - A description: turn it into a small palette and type scale, and show it to the user before building on it.
+   Ask for whatever is missing (a dark-mode palette, the font's license) instead of guessing.
+2. **One token file.** Put the tokens on `:root` in `src/styles/design.css`, plus a dark set under `:root[data-theme='dark']` (`useTelegramTheme` sets `data-theme` from `Telegram.WebApp.colorScheme`). Import it in `src/main.jsx` before `app.css`.
+3. **Map the app variables** in `src/app.css` (`--bg`, `--text`, `--button`, …) to the new tokens, so the existing components switch over at once. Then restyle components in the new language: borders, shadows, radii, spacing.
+4. **Fonts**: self-host them in `src/fonts/` (or load them from a CDN) with a system fallback. Persian UI needs a font with Persian glyphs.
+5. **Keep the Mini App rules**: `dir="rtl"` / logical properties, the safe-area padding on `.app`, tap targets of at least 44px, readable contrast in both themes. Pass the design's background as a hex color to `setHeaderColor` / `setBackgroundColor` in `src/lib/telegram.js`.
+6. **Don't copy someone else's brand** (logo, name, paid fonts) unless the user owns it or its license allows it.
+7. **Save it**: rewrite `docs/DESIGN.md` with the source, the tokens, the fonts and the component rules, so later sessions and other agents keep using it.
+8. **Check it**: build, then screenshot at 390px wide in light and dark (see Step 5).
 
 ## Step 2: Wire the front-end
 

@@ -210,6 +210,10 @@ nullable; pushing to \`main\` deploys.
 Admin-only tools (\`npm run sql\`, admin chat commands, admin Mini App
 endpoints, scheduled jobs, secrets) are not built in. Add one only when the
 user asks for it, following [docs/ADMIN-TOOLS.md](docs/ADMIN-TOOLS.md).
+
+If the project has a Mini App, its look is in [docs/DESIGN.md](docs/DESIGN.md):
+follow it for every front-end change. If the user hasn't chosen a design
+system yet, ask: the default (Telegram theme) or their own.
 `;
 if (!existsSync(agents)) {
   console.log('  ! AGENTS.md not found — run `npx -y @tgcloud/cli@0.2.0 init` first (it writes AGENTS.md and docs/tgcloud-sdk.md), then re-run this script.');
