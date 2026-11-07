@@ -53,12 +53,19 @@ function useTheme() {
 
 // ---------- small pieces ----------
 
-// `code` and **bold** inside a text.
+// @handles stay "@name" inside right-to-left text (otherwise the @ jumps to the end).
+const Handle = ({ children }) => <bdi dir="ltr">{children}</bdi>;
+
+// `code`, **bold** and @handles inside a text.
 function Rich({ text }) {
-  const parts = String(text).split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
+  const parts = String(text).split(/(`[^`]+`|\*\*[^*]+\*\*|@[A-Za-z0-9_]+)/g);
   return parts.map((p, i) => {
     if (p.startsWith('`') && p.endsWith('`')) return <code key={i} className="ic">{p.slice(1, -1)}</code>;
-    if (p.startsWith('**') && p.endsWith('**')) return <strong key={i}>{p.slice(2, -2)}</strong>;
+    if (p.startsWith('**') && p.endsWith('**')) {
+      const inner = p.slice(2, -2);
+      return <strong key={i}>{inner.startsWith('@') ? <Handle>{inner}</Handle> : inner}</strong>;
+    }
+    if (/^@[A-Za-z0-9_]+$/.test(p)) return <Handle key={i}>{p}</Handle>;
     return <Fragment key={i}>{p}</Fragment>;
   });
 }
