@@ -21,8 +21,8 @@
 ## پیش‌نیازها
 
 1. **Node.js 22.12** یا جدیدتر.
-2. یک ربات از [@BotFather](https://t.me/BotFather) با `/newbot`.
-3. در BotFather: ربات ← **Serverless** ← فعال‌سازی. بعد **CLI Access ← Access token** را کپی کنید (شکلش `app<id>:<secret>` است و با توکن معمولی ربات فرق دارد).
+2. **دسترسی به Serverless.** این قابلیت هنوز برای همه فعال نشده و اول باید درخواست بدهید: مینی‌اپ [@BotFather](https://t.me/BotFather) را باز کنید، یک ربات جدید بسازید، وارد بخش **Serverless** همان ربات شوید و از آنجا درخواست بدهید. وقتی BotFather پیام داد که وایت‌لیست شما باز شده، می‌توانید از آن استفاده کنید.
+3. بعد از باز شدن دسترسی، در BotFather: ربات ← **Serverless** ← **CLI Access ← Access token** را کپی کنید (شکلش `app<id>:<secret>` است و با توکن معمولی ربات فرق دارد).
 4. **آیدی عددی** تلگرام خودتان از [@userinfobot](https://t.me/userinfobot).
 
 ## استفاده با ایجنت‌های هوش مصنوعی
@@ -292,7 +292,9 @@ npm --prefix site run dev
 
 **tgcloud-kit** is a set of skills, a tested scaffold and a guide that teach AI coding agents (Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, …) to build, test and deploy Telegram bots on [Telegram Serverless](https://core.telegram.org/bots/serverless). Guide site: https://isamirmmd.github.io/nim-byte-telegram-serverless/
 
-**You need:** Node.js 22.12+, a bot from @BotFather with **Serverless** enabled and its **CLI Access → Access token**, and your numeric Telegram id (@userinfobot).
+**You need:** Node.js 22.12+, access to Telegram Serverless, the bot's **CLI Access → Access token** from BotFather, and your numeric Telegram id (@userinfobot).
+
+Serverless isn't open to everyone yet. Request access first: open the @BotFather Mini App, create a new bot, go to its **Serverless** section and request access there. Once BotFather messages you that your whitelist is open, you can use it.
 
 **Claude Code plugin:**
 

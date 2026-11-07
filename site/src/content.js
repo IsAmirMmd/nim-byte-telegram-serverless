@@ -84,12 +84,13 @@ export const content = {
 
     start: {
       title: 'شروع',
-      lead: 'از هیچ تا رباتی که روی تلگرام جواب می‌ده، معمولاً کمتر از نیم ساعت.',
+      lead: 'وقتی دسترسی سرورلس باز شد، از هیچ تا رباتی که روی تلگرام جواب می‌ده معمولاً کمتر از نیم ساعت طول می‌کشه.',
       needTitle: 'قبل از شروع لازم داری',
       needs: [
         '**Node.js 22.12** یا جدیدتر',
         'یک ربات از **@BotFather** (`/newbot`)',
-        'در BotFather: ربات ← **Serverless** ← فعال‌سازی، و بعد **CLI Access ← Access token**',
+        'دسترسی به **Serverless**: هنوز برای همه باز نیست؛ از مینی‌اپ BotFather درخواست بده (توضیحش در «سؤال‌ها»)',
+        'بعد از باز شدن دسترسی، در BotFather: ربات ← **Serverless** ← **CLI Access ← Access token**',
         '**آیدی عددی** تلگرام خودت از **@userinfobot**',
         'یک ایجنت هوش مصنوعی (یا فقط ترمینال)',
       ],
@@ -201,7 +202,7 @@ export const content = {
     faq: {
       title: 'سؤال‌های رایج',
       items: [
-        { q: 'سرور یا هاست لازم دارم؟', a: 'نه. کد روی Telegram Serverless اجرا می‌شه، دیتابیس SQLite داخلیه و مینی‌اپ روی `app<id>.tgcloud.ai` میزبانی می‌شه.' },
+        { q: 'سرور یا هاست لازم دارم؟', a: 'نه. کد روی Telegram Serverless اجرا می‌شه، دیتابیس SQLite داخلیه و مینی‌اپ روی `app<id>.tgcloud.ai` میزبانی می‌شه. **ولی قابلیت سرورلس هنوز برای همه فعال نشده** و اول باید درخواست بدی: مینی‌اپ **@BotFather** رو باز کن، یه ربات جدید بساز، وارد بخش **Serverless** همون ربات شو و از اونجا درخواست بده. وقتی BotFather بهت پیام داد که وایت‌لیستت باز شده، می‌تونی ازش استفاده کنی.' },
         { q: 'کدوم ایجنت‌ها کار می‌کنن؟', a: 'هر ایجنتی که بتونه فایل بخونه و دستور اجرا کنه. Claude Code از پلاگین و اسکیل‌ها مستقیم استفاده می‌کنه؛ Codex، Cursor، Gemini CLI و Copilot از `AGENTS.md`.' },
         { q: 'باید برنامه‌نویسی بلد باشم؟', a: 'لازم نیست، ولی کمک می‌کنه. ایجنت کد می‌نویسه و تست می‌کنه؛ کار شما توضیح خواسته، لاگین و تأیید تغییراته.' },
         { q: 'لاگ‌ها رو کجا ببینم؟', a: 'خروجی `console` در `npx tgcloud run` دیده می‌شه. برای همین خطاهای مهم (مثل شکست دستورهای ادمین) به ادمین در چت گزارش می‌شن.' },
@@ -293,12 +294,13 @@ export const content = {
 
     start: {
       title: 'Get started',
-      lead: 'From nothing to a bot that answers in Telegram, usually in under half an hour.',
+      lead: 'Once your Serverless access is open, going from nothing to a bot that answers in Telegram usually takes under half an hour.',
       needTitle: 'You need',
       needs: [
         '**Node.js 22.12** or newer',
         'A bot from **@BotFather** (`/newbot`)',
-        'In BotFather: your bot → **Serverless** → enable, then **CLI Access → Access token**',
+        'Access to **Serverless**: not open to everyone yet; request it in the BotFather Mini App (see the FAQ)',
+        'Once access is open, in BotFather: your bot → **Serverless** → **CLI Access → Access token**',
         'Your **numeric Telegram id** from **@userinfobot**',
         'An AI agent (or just a terminal)',
       ],
@@ -410,7 +412,7 @@ export const content = {
     faq: {
       title: 'FAQ',
       items: [
-        { q: 'Do I need a server or hosting?', a: 'No. The code runs on Telegram Serverless, the SQLite database is built in, and the Mini App is hosted at `app<id>.tgcloud.ai`.' },
+        { q: 'Do I need a server or hosting?', a: 'No. The code runs on Telegram Serverless, the SQLite database is built in, and the Mini App is hosted at `app<id>.tgcloud.ai`. **But Serverless isn\'t open to everyone yet**, so you request access first: open the **@BotFather** Mini App, create a new bot, go to that bot\'s **Serverless** section and request access there. Once BotFather messages you that your whitelist is open, you can use it.' },
         { q: 'Which agents work?', a: 'Any agent that can read files and run commands. Claude Code uses the plugin and skills directly; Codex, Cursor, Gemini CLI and Copilot go through `AGENTS.md`.' },
         { q: 'Do I need to know how to code?', a: 'Not strictly, but it helps. The agent writes and tests the code; you describe what you want, log in, and review the changes.' },
         { q: 'Where are the logs?', a: '`console` output shows up in `npx tgcloud run`. That\'s why important failures (like a failing admin command) are reported to the admin in the chat.' },

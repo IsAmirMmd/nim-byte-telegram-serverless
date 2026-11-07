@@ -81,7 +81,15 @@ asks for one. See Step 6.
 `tgcloud login` is interactive, so ask the user to run it. In Claude Code they
 can type `! npx tgcloud login`. The token comes from **BotFather → the bot →
 Serverless → CLI Access → Access token**. Never ask them to paste the token into
-the chat. Then:
+the chat.
+
+Serverless isn't open to every account yet. If the user has no Serverless
+section or can't enable it, they request access first: open the BotFather Mini
+App, create a new bot, go to its **Serverless** section and request access.
+Once BotFather messages them that their whitelist is open, they can continue.
+The scaffold and `npm test` work offline in the meantime.
+
+Then:
 
 ```
 npm run deploy                        # push the code (builds the Mini App first if there is one)
