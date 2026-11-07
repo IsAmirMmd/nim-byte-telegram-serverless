@@ -1,0 +1,181 @@
+---
+name: tgcloud-bot
+description: Start, scaffold or grow a Telegram bot on Telegram Serverless (tgcloud) with a proven architecture — tgcloud/ layout (schema, lib per feature, thin handlers and endpoints), users tracking, a /start menu, deep links, multi-step input, feedback to the admin, offline tests on a mock SDK, and auto-deploy on GitHub Actions; optionally a React Mini App. Admin tools (`npm run sql`, admin commands, an admin panel, scheduled jobs, secrets) are added on request from references/admin-tools.md. Use when the user wants to create, scaffold, start or set up a new Telegram serverless / tgcloud bot (or Mini App), asks to "use tgcloud-kit", asks for one of those admin tools, or wants an existing tgcloud project brought to this structure.
+argument-hint: "[admin telegram id] [what the bot should do]"
+---
+
+# tgcloud bot: start here
+
+This is the entry point of **tgcloud-kit**. It turns an empty folder into a
+working Telegram Serverless bot with the architecture of a production bot, then
+builds the requested features on it. The architecture and its conventions are
+in [references/architecture.md](references/architecture.md). Read it before
+writing feature code. The scaffold also copies it into the project as
+`docs/ARCHITECTURE.md`.
+
+Sibling skills in this kit:
+
+| Skill | Use it for |
+|---|---|
+| **tgcloud-endpoints** | Writing Mini App endpoints: auth, errors, pagination |
+| **tgcloud-mini-app** | The React front-end: wiring, styling with the Telegram theme, deploy |
+
+## Step 1: Inputs
+
+Take them from `$ARGUMENTS` or the conversation. Ask only for what is missing:
+- **Admin Telegram user id**: a number. The user gets it from @userinfobot.
+  It receives the users' feedback, and any admin tool added later checks it.
+- **What the bot does**: the features. These decide whether it needs a
+  **Mini App** (dashboards, forms, catalogs → `--mini-app`).
+- **Project folder**: default to the current directory when it's empty or
+  already a tgcloud project. Never scaffold into the tgcloud-kit repository
+  itself: if the current folder is the kit's repo, use a new sibling folder
+  (e.g. `../my-bot`), because the bot becomes its own git repository.
+
+## Step 2: Scaffold
+
+In the project folder:
+
+```
+npx -y @tgcloud/cli@0.2.0 init                  # skip if tgcloud/ already exists; writes AGENTS.md, docs/tgcloud-sdk.md, tgcloud.jsonc, git repo
+node "${CLAUDE_SKILL_DIR}/scripts/scaffold.mjs" . --admin <ADMIN_ID> [--mini-app] [--title "<app title>"]
+npm install
+npm test                                          # 7 offline tests (10 with --mini-app) must pass before you change anything
+```
+
+The kit's repository also has `scripts/create-bot.mjs`, which does all four
+steps for a new folder:
+`node <kit repo>/scripts/create-bot.mjs ../my-bot --admin <ADMIN_ID> [--mini-app]`.
+
+`scaffold.mjs` overlays the template and never overwrites the user's files. It
+only replaces the stock `init` versions of `schema.js` and
+`handlers/message.js`. It adds:
+
+- `tgcloud/`:
+  - `schema.js`: `settings`, `users`
+  - `lib/`: config, settings, users, feedback, access, menu, query, html,
+    time, files
+  - `handlers/`: `message` (`/start`, `/stop`, `/help`, feedback),
+    `callback_query`, `my_chat_member`
+  - `endpoints/`: `me` (the caller's own profile)
+- `test/` (a mock SDK on node:sqlite)
+- `.github/workflows/deploy.yml`
+- `docs/ARCHITECTURE.md` and `docs/ADMIN-TOOLS.md`, plus a pointer section in
+  `AGENTS.md`
+- npm scripts (`test`, `deploy`, `migrate`, `status`, …)
+- `.claude/settings.json`, which enables this kit for the project. Pass
+  `--no-claude-settings` to skip it.
+
+`--mini-app` adds:
+- the React + Vite front-end: the user's profile and a feedback form, styled
+  with Telegram's own theme colors;
+- `endpoints/feedback.js` (validated, throttled) and its tests;
+- `tgcloud.jsonc` → `"static"`.
+
+**No admin routes or admin commands are scaffolded.** There is no `/api/sql`,
+no `/stats` or `/backup`, no admin panel and no scheduled job until the user
+asks for one. See Step 6.
+
+## Step 3: Link to the bot (the user does this)
+
+`tgcloud login` is interactive, so ask the user to run it. In Claude Code they
+can type `! npx tgcloud login`. The token comes from **BotFather → the bot →
+Serverless → CLI Access → Access token**. Never ask them to paste the token into
+the chat. Then:
+
+```
+npm run deploy                        # push the code (builds the Mini App first if there is one)
+npx tgcloud migrate                   # create the tables (interactive; or `npx tgcloud migrate --safe`)
+```
+
+Then the admin sends `/start` to the bot. The command list goes in BotFather
+(`/setcommands` → `start - شروع`, `help - راهنما`). With a Mini App, set the URL
+that `push` printed in BotFather (menu button / Mini App) and in
+`MINI_APP_URL` (`lib/config.js`).
+
+## Step 4: Build the features
+
+Follow the architecture. Summary:
+
+1. **Schema**: tables go in `tgcloud/schema.js`. New columns on existing tables
+   are nullable or have a default. No foreign keys. Drop only with
+   `.deprecated()`.
+2. **Logic**: one `tgcloud/lib/<feature>.js` per feature, holding its queries,
+   its Bot API calls, and its `handleXCallback(query)` that returns `true`
+   when a button was its own.
+3. **Entry points**: keep them thin.
+   - Public bot commands: a line in the public section of
+     `handlers/message.js`.
+   - Buttons: a `<feature>:` prefix in `handlers/callback_query.js`.
+   - Deep links: `startPayload()`.
+   - A question and its answer: `askFor()` / `takePending()`.
+   - Mini App calls: `endpoints/<name>.js`. Use the tgcloud-endpoints skill.
+4. **Tests**: `test/<feature>.test.mjs` with the helpers (`msg`, `press`,
+   `ctxOf`, `take`, `failNext`, `row`). Run `npm test`. See the existing
+   tests for the shape.
+5. **Check in the cloud** when the Bot API's real behavior matters:
+   `npx tgcloud run handlers/message '{ text: "/help", from: { id: <ADMIN_ID> }, chat: { id: <ADMIN_ID>, type: "private" } }'`.
+
+Code patterns (buttons, upserts, files, channel posts, deep links) are in
+[references/patterns.md](references/patterns.md).
+
+Rules that break bots most often (AGENTS.md has the full list):
+- Relative imports **with `.js`**. Import the SDK by name. No npm packages,
+  filesystem or env vars at runtime.
+- `await` every DB call.
+- Raw SQL returns raw values (0/1, strings), so convert them.
+- `push` never changes the DB. Schema changes need `migrate`.
+- Every endpoint can be called by every Mini App user. Authorize from
+  `ctx.initData.user.id` inside each one, and validate `input`.
+- User-facing copy is Persian by default (the template's). Change it if the
+  bot targets another language.
+
+## Step 5: Auto-deploy
+
+1. Push the project to its own GitHub repository.
+2. Add the repository secret **TGCLOUD_TOKEN** (the same token as `login`).
+3. From then on, every push to `main` that touches the bot or the front-end:
+   1. builds;
+   2. pushes;
+   3. runs `migrate --safe` and `webhook sync`. Each of these is its own
+      `always()` step; [architecture §9](references/architecture.md) explains
+      why.
+
+Without the secret, the workflow does nothing.
+
+## Step 6: Admin tools, only on request
+
+When the user asks for any of these, build it from
+[references/admin-tools.md](references/admin-tools.md) (the project has a copy
+in `docs/ADMIN-TOOLS.md`), with its tests, and tell them how to use it:
+
+| The user asks for | What you add |
+|---|---|
+| "query the database", `npm run sql` | `endpoints/sql.js` (admin only), `scripts/sql.mjs`, the `sql` npm script. Then: `npm run sql -- "SELECT * FROM users LIMIT 5"` |
+| `/stats`, `/backup`, other admin commands | `lib/admin.js` and an `adminCommand()` router in `handlers/message.js`, with failures reported to the admin |
+| an admin panel in the Mini App | `adminStats`, `adminUsers`, … endpoints with `requireAdmin(ctx)` first |
+| a daily / weekly job | an admin command plus `.github/workflows/scheduled.yml` |
+| storing an API key | a `/setkey` admin command into the `settings` table |
+
+Never add an admin tool the user didn't ask for.
+
+## Existing projects
+
+For a project with its own `tgcloud/schema.js`, the scaffold runs in
+**existing-project mode** and leaves `tgcloud/` alone. It only adds:
+- `.github/workflows/deploy.yml`;
+- the test harness (`test/sdk/`, `test/helpers.mjs`);
+- `docs/ARCHITECTURE.md`, `docs/ADMIN-TOOLS.md` and the `AGENTS.md` section;
+- the npm scripts that are missing (existing ones are kept);
+- `.claude/settings.json`.
+
+With `--mini-app`:
+- The front-end goes in only if there's no `index.html`.
+- The feedback endpoint goes in only if `tgcloud/lib` came from this kit
+  (`lib/feedback.js`, `profileOf`).
+
+After that:
+1. Write `test/<feature>.test.mjs` for the project's existing handlers. The
+   harness runs real production code unchanged.
+2. Move logic toward the architecture one feature at a time.
+3. Run `npm test` after each step.

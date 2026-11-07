@@ -1,0 +1,134 @@
+/* The Mini App's look comes from Telegram itself: telegram-web-app.js sets the
+   --tg-theme-* variables from the user's theme (light, dark, custom) and keeps
+   them updated. The fallbacks are for `npm run dev` in a browser. */
+
+:root {
+  --fb-bg: #ffffff;
+  --fb-secondary-bg: #f1f2f5;
+  --fb-text: #15171a;
+  --fb-hint: #7d838c;
+  --fb-link: #2f7fd8;
+  --fb-button: #2f7fd8;
+  --fb-button-text: #ffffff;
+  --fb-destructive: #d64545;
+  --fb-separator: rgba(125, 131, 140, 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fb-bg: #1d2025;
+    --fb-secondary-bg: #121417;
+    --fb-text: #f1f2f4;
+    --fb-hint: #8d939c;
+    --fb-link: #6aa9f0;
+    --fb-button: #4c8fdc;
+    --fb-separator: rgba(141, 147, 156, 0.2);
+  }
+}
+
+:root {
+  --bg: var(--tg-theme-secondary-bg-color, var(--fb-secondary-bg));
+  --section-bg: var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, var(--fb-bg)));
+  --text: var(--tg-theme-text-color, var(--fb-text));
+  --hint: var(--tg-theme-hint-color, var(--fb-hint));
+  --link: var(--tg-theme-link-color, var(--fb-link));
+  --button: var(--tg-theme-button-color, var(--fb-button));
+  --button-text: var(--tg-theme-button-text-color, var(--fb-button-text));
+  --destructive: var(--tg-theme-destructive-text-color, var(--fb-destructive));
+  --section-title: var(--tg-theme-section-header-text-color, var(--hint));
+  --separator: var(--tg-theme-section-separator-color, var(--fb-separator));
+  --radius: 14px;
+  color-scheme: light dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.7 system-ui, -apple-system, "Segoe UI", Tahoma, "Vazirmatn", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* In fullscreen Telegram draws its close/menu buttons over the page: keep
+   content below them (safe area = notch, content safe area = Telegram's UI).
+   The variables are set by telegram-web-app.js and are 0 outside fullscreen. */
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: calc(16px + var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px))
+           16px
+           calc(24px + var(--tg-safe-area-inset-bottom, 0px) + var(--tg-content-safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.app--center { min-height: 100vh; justify-content: center; }
+
+.header__title { margin: 0; font-size: 1.4rem; font-weight: 800; }
+.header .hint { margin: 0; }
+
+.section { display: flex; flex-direction: column; gap: 6px; }
+.section__title {
+  margin: 0;
+  padding-inline: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--section-title);
+}
+.section__body {
+  background: var(--section-bg);
+  border-radius: var(--radius);
+  padding: 4px 14px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 11px;
+}
+.row + .row { border-top: 1px solid var(--separator); }
+.row__label { color: var(--hint); }
+.row__value { text-align: end; overflow-wrap: anywhere; }
+
+.hint { color: var(--hint); font-size: 0.9rem; }
+.num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+.form { display: flex; flex-direction: column; gap: 10px; padding-block: 12px; }
+.form__footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.input {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--separator);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.input:focus { outline: 2px solid var(--button); outline-offset: 1px; }
+
+.button {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 22px;
+  background: var(--button);
+  color: var(--button-text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.button:disabled { opacity: 0.5; cursor: default; }
+.button:not(:disabled):active { transform: scale(0.98); }
+
+.status { margin: 0; font-size: 0.9rem; }
+.status--ok { color: var(--link); }
+.status--error { color: var(--destructive); }
+
+.notice { text-align: center; color: var(--hint); }
+.notice__icon { font-size: 2.5rem; }
+.notice p { margin: 8px 0 0; }
