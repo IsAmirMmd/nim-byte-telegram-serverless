@@ -41,7 +41,7 @@ tgcloud/                      ← deployed code; the only code the platform sees
     users.js                  ← users table: /start tracking, blocked, /stop, pending_action, profileOf
     feedback.js               ← feedback to the admin + a per-user throttle (bot and Mini App share it)
     access.js                 ← callerId / forbidden() / badInput(); isAdmin / requireAdmin for admin tools
-    menu.js                   ← the /start menu as screens (menu:<screen>)
+    menu.js                   ← navigation: inline and reply-keyboard screens, each with an automatic back button
     query.js                  ← pagination, search, ORDER BY, WHERE helpers for list endpoints
     html.js                   ← esc(), link(), fa() for parse_mode HTML texts
     time.js                   ← now(), DAY, local time with a fixed UTC offset
@@ -102,8 +102,9 @@ them when the user asks.
   3. `/stop`;
   4. admin commands, once added (`docs/ADMIN-TOOLS.md`);
   5. public commands (`/help`);
-  6. the answer to a pending question;
-  7. everything else is ignored, with no reply.
+  6. reply-keyboard buttons and `🔙 بازگشت` (`handleKeyboardText`);
+  7. the answer to a pending question;
+  8. everything else is ignored, with no reply.
 - **callback_data** is `<feature>:<action>[:<args>]`, at most 64 bytes, for
   example `menu:help` or `vote:up:42`. Each lib module exports
   `handleXCallback(query)`, which returns `true` when the button was one of
@@ -116,6 +117,24 @@ them when the user asks.
   at most 64 characters, `[A-Za-z0-9_-]`. `startPayload()` in `message.js`
   routes them by prefix. The first payload a user ever came with is kept in
   `users.start_param` for attribution.
+- **Navigation: every action has a way back.** Any message a button or
+  command leads to has a way back to the screen before it: a
+  `🔙 بازگشت` button (or `🏠 منوی اصلی` after a final result such as "sent ✅").
+  Only the root (`home`) has none. This holds for inline buttons and for
+  reply-keyboard buttons alike. `lib/menu.js` does it by construction:
+  - every screen (`SCREENS` for inline, `KEYBOARDS` for reply keyboards)
+    names its `parent`, and the back row is added automatically;
+  - a question is a screen too (`enter: (user) => askFor(…)`). Going back
+    from it cancels the question (`cancelPending`). A typed `🔙 بازگشت` does
+    the same;
+  - inline keyboards a feature builds itself end with `withBack(rows, to)` or
+    `backButton(to)`, where `to` is a menu screen or the feature's own
+    callback_data (`shop:list:2`);
+  - if a screen is reached from several places, carry the origin in its
+    callback_data (`item:7:list2`), and point back there;
+  - a test in `test/bot.test.mjs` fails when a screen's parent or a
+    `menu:` button leads nowhere. Every new feature test checks its back
+    button.
 - **Multi-step input**: `askFor(user, 'action:args')` stores
   `users.pending_action`. The next private message is read by `takePending()`,
   which clears the action and expires it after 15 minutes. Call `takePending()`

@@ -72,14 +72,59 @@ Add `replace_callback_query_message: true` to show it *in place of* the
 message, for that user only. More (receiver_user_id, edits, ephemeral
 commands): [bot-api.md](bot-api.md#ephemeral-messages).
 
-## Menus as screens
+## Menus as screens, always with a way back
 
-`lib/menu.js` in the template:
-- A screen is `{ text, reply_markup }`.
-- `menu:<screen>` buttons edit the same message into that screen with
-  `editMessageText`.
-- A "not modified" error is ignored.
-- Add a screen by adding an entry to `SCREENS`.
+**Rule: every screen a button or command opens has a way back to the screen
+before it**, for inline and reply-keyboard buttons alike. Only the root has
+none. `lib/menu.js` in the template enforces it:
+
+```js
+// lib/menu.js → SCREENS: name → { parent, text(user), rows(user), enter?(user) }
+shop: {
+  parent: 'home',                                    // «🔙 بازگشت» → menu:home is added automatically
+  text: () => '🛍 فروشگاه',
+  rows: () => [[{ text: '📦 محصولات', callback_data: 'shop:list:1' }]],
+},
+rename: {                                            // a question is a screen too
+  parent: 'shop',
+  text: () => 'اسم جدید رو بفرست 👇',
+  rows: () => [],
+  enter: (user) => askFor(user, 'rename'),           // back from it cancels the question
+},
+```
+
+- `menu:<screen>` buttons edit the same message into that screen. A "not
+  modified" error is ignored. A message that can't become text (a photo, a
+  widget) gets the screen as a new message instead.
+- Pressing any `menu:` button cancels an open question.
+- Keyboards a feature builds itself (lists, item pages) end with a back row:
+  `reply_markup: withBack(rows, 'shop')`, or `withBack(rows, 'shop:list:2')`
+  to go back to a feature's own screen. Its `handleXCallback` must handle that
+  callback_data.
+- After a final result ("sent ✅", "saved"), add `homeButton()` (`🏠 منوی اصلی`).
+- When a screen can be reached from several places, put the origin in the
+  callback_data (`item:7:list2`) and build back from it.
+- Show a screen as a new message (after a command) with
+  `showScreen(chatId, name, user)`.
+
+## Reply keyboards (buttons under the input field)
+
+They send their label as plain text, so `lib/menu.js` remembers which
+keyboard each user sees (`users.keyboard`), and `handleKeyboardText()` in
+`handlers/message.js` routes the labels and `🔙 بازگشت`:
+
+```js
+// lib/menu.js → KEYBOARDS
+main:     { parent: null,   text: () => 'منوی اصلی',         rows: () => [[{ text: '📦 محصولات', to: 'products' }]] },
+products: { parent: 'main', text: () => 'یکی رو انتخاب کن', rows: () => [[{ text: '🍕 پیتزا', run: showPizza }]] },
+```
+
+- Show the root with `showKeyboard(message, 'main')`. Every non-root keyboard
+  gets a `🔙 بازگشت` row automatically, which goes to its parent.
+- A question asked from a keyboard (`run` calls `askFor`) should be sent
+  with `reply_markup: questionKeyboard()` (only `🔙 بازگشت`). Back cancels
+  the question and shows that keyboard again.
+- Labels must be unique within a keyboard. Keep them short.
 
 ## One row per (item, user): upsert
 
@@ -134,7 +179,9 @@ if (rename) return renameItem(Number(rename[1]), text, message);
 ```
 
 `takePending` clears the action, so one question takes one answer. It ignores
-answers older than 15 minutes.
+answers older than 15 minutes. Every question has a way back: make it a
+screen with `enter` (above) so its back button cancels it, or send it with
+`withBack([], '<screen it came from>')`.
 
 ## Sending files
 

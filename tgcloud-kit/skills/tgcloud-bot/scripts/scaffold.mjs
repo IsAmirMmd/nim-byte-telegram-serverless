@@ -210,6 +210,13 @@ handlers and endpoints stay thin and call \`tgcloud/lib/\`; every feature gets a
 test in \`test/\` (\`npm test\`, offline); new columns on existing tables are
 nullable; pushing to \`main\` deploys.
 
+**Every action has a way back**: every screen a button (inline or reply
+keyboard) or command opens has «🔙 بازگشت» to the screen before it, and a
+final result has «🏠 منوی اصلی». Add screens to \`tgcloud/lib/menu.js\` with
+a \`parent\` (the back button is added automatically); keyboards a feature
+builds itself use \`withBack()\`. In the Mini App, every screen but the first
+calls \`useBackButton(goBack)\`.
+
 The Bot API (10.4) as this project uses it: [docs/BOT-API.md](docs/BOT-API.md):
 which update types exist (one \`handlers/<type>.js\` each), and newer features
 such as ephemeral messages, rich messages, streaming drafts and widgets.
