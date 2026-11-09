@@ -1,13 +1,15 @@
-// Persian number/date formatting for the UI.
+// Numbers and dates in the UI's language (lib/i18n.js): 1,234 / ۱٬۲۳۴.
 
-export const fa = (n) => Number(n ?? 0).toLocaleString('fa-IR');
+const locale = (lang) => (lang === 'fa' ? 'fa-IR' : 'en-US');
 
-const dateFmt = new Intl.DateTimeFormat('fa-IR', { timeZone: 'Asia/Tehran', dateStyle: 'medium', timeStyle: 'short' });
+export const formatNumber = (lang, n) => Number(n ?? 0).toLocaleString(locale(lang));
 
-// Unix seconds → "۲۴ مهر ۱۴۰۵، ۱۲:۳۰"
-export const faDate = (unix) => (unix ? dateFmt.format(new Date(unix * 1000)) : '—');
+// Unix seconds → "Oct 16, 2026, 12:30 PM" / "۲۴ مهر ۱۴۰۵، ۱۲:۳۰", in the device's timezone.
+export const formatDate = (lang, unix) => (unix
+  ? new Intl.DateTimeFormat(locale(lang), { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(unix * 1000))
+  : '—');
 
-// 0.1234 → "۱۲٫۳٪"; null → "—"
-export const faPercent = (ratio) => (ratio == null || !Number.isFinite(ratio)
+// 0.1234 → "12.3%" / "۱۲٫۳٪"; null → "—"
+export const formatPercent = (lang, ratio) => (ratio == null || !Number.isFinite(ratio)
   ? '—'
-  : `${Number((ratio * 100).toFixed(1)).toLocaleString('fa-IR')}٪`);
+  : new Intl.NumberFormat(locale(lang), { style: 'percent', maximumFractionDigits: 1 }).format(ratio));

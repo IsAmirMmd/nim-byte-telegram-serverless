@@ -1,5 +1,5 @@
 // A counter widget: the full loop of a widget in one feature.
-//   /counter          sends it (handlers/message.js → sendCounter)
+//   /counter          sends it (handlers/message.js → sendCounter(message))
 //   a tap on − ↺ +    TelegramWidget.request('count:<inc|dec|reset>')
 //                     → handlers/widget_query.js → handleCounterQuery
 // The bot keeps the authoritative count in `widget_counters`, writes it into
@@ -10,17 +10,22 @@ import { api, db } from 'sdk';
 import { sql } from 'sdk/db';
 import HTML from './counter.html.js';
 import { homeButton } from '../menu.js';
+import { userLang } from '../users.js';
 
 const state = (n, r) => JSON.stringify({ n, r });
+// Shown in the chat list, notifications and old apps. (A bigger feature puts its texts in lib/i18n.js.)
+const CAPTION = { en: '🔢 Counter', fa: '🔢 شمارنده' };
 
-export async function sendCounter(chatId) {
+export async function sendCounter(message) {
+  const chatId = message.chat.id;
+  const lang = await userLang(message.from);
   const sent = await api.sendWidget({
     chat_id: chatId,
     html: HTML,
-    caption: '🔢 شمارنده',          // shown in the chat list, notifications and old apps
+    caption: CAPTION[lang] ?? CAPTION.en,
     chat_data: state(0, 0),
     allow_queries: true,
-    reply_markup: { inline_keyboard: [[homeButton()]] },   // a way back to the menu, like every message
+    reply_markup: { inline_keyboard: [[homeButton(lang)]] },   // a way back to the menu, like every message
   });
   await db.run(sql`INSERT INTO widget_counters (chat_id, message_id) VALUES (${chatId}, ${sent.message_id})`);
   return sent;

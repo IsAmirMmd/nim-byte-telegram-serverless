@@ -4,6 +4,7 @@
 
 import { callerId } from '../lib/access.js';
 import { profileOf } from '../lib/users.js';
+import { pickLang } from '../lib/i18n.js';
 
 export default async function (input, ctx) {
   const user = ctx.initData.user;   // verified by the platform; there is no ctx.user
@@ -13,5 +14,6 @@ export default async function (input, ctx) {
     first_name: user?.first_name ?? null,
     username: user?.username ?? null,
     ...profile,
+    lang: pickLang(profile.lang, user?.language_code),   // the bot's language for this user: the Mini App uses it too
   };
 }

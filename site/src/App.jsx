@@ -19,7 +19,7 @@ function initialLang() {
   const fromUrl = new URLSearchParams(window.location.search).get('lang');
   if (fromUrl === 'fa' || fromUrl === 'en') return fromUrl;
   const saved = store.get('lang');
-  return saved === 'en' || saved === 'fa' ? saved : 'fa';
+  return saved === 'en' || saved === 'fa' ? saved : 'en';   // English by default
 }
 
 function useLang() {

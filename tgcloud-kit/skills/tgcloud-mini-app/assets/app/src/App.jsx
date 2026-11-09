@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useTelegramTheme, haptic } from './lib/telegram.js';
 import { useEndpoint } from './lib/useEndpoint.js';
 import { callEndpoint } from './lib/serverless.js';
-import { fa, faDate } from './lib/format.js';
+import { formatNumber, formatDate } from './lib/format.js';
+import { useI18n } from './lib/i18n.js';
 
-// An EndpointError's message is written for the user; anything else gets a generic text.
-const errorText = (e) => (e.type === 'ENDPOINT_ERROR' ? e.message : `خطا در ارتباط با سرور (${e.type ?? e.message})`);
+// An EndpointError's message is written for the user (in their language, by the
+// endpoint); anything else gets a generic text.
+const errorText = (t, e) => (e.type === 'ENDPOINT_ERROR' ? e.message : t('server_error', e.type ?? e.message));
 
 const FEEDBACK_MAX = 2000;   // same limit as tgcloud/lib/feedback.js
 
@@ -39,26 +41,26 @@ function Row({ label, children }) {
 }
 
 // The caller's own profile, from the `me` endpoint (verified on the server).
-function Profile({ me }) {
+function Profile({ me, i18n: { t, lang } }) {
   return (
-    <Section title="پروفایل">
-      <Row label="نام"><bdi>{me.first_name || '—'}</bdi></Row>
-      <Row label="یوزرنیم"><bdi>{me.username ? `@${me.username}` : '—'}</bdi></Row>
-      <Row label="آیدی عددی"><span className="num">{me.id}</span></Row>
+    <Section title={t('profile')}>
+      <Row label={t('name')}><bdi>{me.first_name || '—'}</bdi></Row>
+      <Row label={t('username')}><bdi>{me.username ? `@${me.username}` : '—'}</bdi></Row>
+      <Row label={t('user_id')}><span className="num">{me.id}</span></Row>
       {me.started
         ? (
           <>
-            <Row label="عضو از">{faDate(me.first_seen_at)}</Row>
-            <Row label="تعداد استارت">{fa(me.start_count)}</Row>
+            <Row label={t('member_since')}>{formatDate(lang, me.first_seen_at)}</Row>
+            <Row label={t('starts')}>{formatNumber(lang, me.start_count)}</Row>
           </>
         )
-        : <p className="hint">هنوز ربات رو استارت نکردی. توی چت ربات /start رو بزن.</p>}
+        : <p className="hint">{t('not_started')}</p>}
     </Section>
   );
 }
 
 // A form that calls an endpoint: disabled while sending, server errors shown inline.
-function Feedback({ enabled }) {
+function Feedback({ enabled, i18n: { t, lang } }) {
   const [text, setText] = useState('');
   const [state, setState] = useState({ sending: false, sent: false, error: null });
 
@@ -71,30 +73,30 @@ function Feedback({ enabled }) {
       setState({ sending: false, sent: true, error: null });
       haptic('success');
     } catch (err) {
-      setState({ sending: false, sent: false, error: errorText(err) });
+      setState({ sending: false, sent: false, error: errorText(t, err) });
       haptic('error');
     }
   }
 
   return (
-    <Section title="ارسال نظر">
+    <Section title={t('feedback')}>
       <form className="form" onSubmit={submit}>
         <textarea
           className="input"
           rows={4}
           maxLength={FEEDBACK_MAX}
-          placeholder="نظر، پیشنهاد یا مشکلی که دیدی…"
+          placeholder={t('feedback_placeholder')}
           value={text}
           disabled={!enabled}
           onChange={(e) => { setText(e.target.value); setState((s) => ({ ...s, sent: false, error: null })); }}
         />
         <div className="form__footer">
-          <span className="hint num">{fa(text.length)} / {fa(FEEDBACK_MAX)}</span>
+          <span className="hint num">{formatNumber(lang, text.length)} / {formatNumber(lang, FEEDBACK_MAX)}</span>
           <button className="button" type="submit" disabled={!enabled || state.sending || !text.trim()}>
-            {state.sending ? 'در حال ارسال…' : 'ارسال'}
+            {state.sending ? t('sending') : t('send')}
           </button>
         </div>
-        {state.sent && <p className="status status--ok">رسید، ممنون 🙏</p>}
+        {state.sent && <p className="status status--ok">{t('sent')}</p>}
         {state.error && <p className="status status--error">{state.error}</p>}
       </form>
     </Section>
@@ -104,19 +106,21 @@ function Feedback({ enabled }) {
 export default function App() {
   useTelegramTheme();
   const me = useEndpoint('me');
+  const i18n = useI18n(me.data?.lang);   // the bot's language for this user; until then, Telegram's
+  const { t } = i18n;
 
-  if (me.loading) return <Notice icon="⏳" text="در حال بارگذاری…" />;
-  if (me.error?.type === 'NOT_IN_TELEGRAM') return <Notice icon="📱" text="این صفحه رو از داخل تلگرام باز کن." />;
-  if (me.error) return <Notice icon="⚠️" text={errorText(me.error)} />;
+  if (me.loading) return <Notice icon="⏳" text={t('loading')} />;
+  if (me.error?.type === 'NOT_IN_TELEGRAM') return <Notice icon="📱" text={t('open_in_telegram')} />;
+  if (me.error) return <Notice icon="⚠️" text={errorText(t, me.error)} />;
 
   return (
     <main className="app">
       <header className="header">
         <h1 className="header__title">__APP_TITLE__</h1>
-        <p className="hint">سلام {me.data.first_name} 👋</p>
+        <p className="hint"><bdi>{t('hello', me.data.first_name)}</bdi></p>
       </header>
-      <Profile me={me.data} />
-      <Feedback enabled={me.data.started} />
+      <Profile me={me.data} i18n={i18n} />
+      <Feedback enabled={me.data.started} i18n={i18n} />
     </main>
   );
 }
