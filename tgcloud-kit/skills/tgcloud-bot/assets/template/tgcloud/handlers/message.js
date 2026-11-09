@@ -3,15 +3,16 @@
 // `ctx.update`. Keep this file a router: the work happens in lib/.
 //
 // Order matters: /start (with deep-link payloads) → /stop → public commands →
-// the answer to a pending question → ignore.
+// reply-keyboard buttons and «🔙 بازگشت» → the answer to a pending question → ignore.
+// Every reply ends with a way back (a back or 🏠 button): see lib/menu.js.
 //
 // Admin-only commands (/stats, /backup, …) are not part of the template. Ask
 // your AI agent for them when you need them: the tgcloud-bot skill's
 // references/admin-tools.md shows it how to add them safely.
 
 import { api, BotApiError } from 'sdk';
-import { trackStart, unsubscribe, takePending } from '../lib/users.js';
-import { sendHome, sendHelp } from '../lib/menu.js';
+import { trackStart, unsubscribe, takePending, askFor } from '../lib/users.js';
+import { sendHome, sendHelp, handleKeyboardText, withBack, homeButton } from '../lib/menu.js';
 import { forwardFeedback, FEEDBACK_MAX } from '../lib/feedback.js';
 
 // /start <payload> from a deep link (t.me/<bot>?start=<payload>): route by
@@ -38,18 +39,25 @@ export default async function (message, ctx) {
   // Public commands. List them in BotFather (/setcommands) so Telegram suggests them.
   if (isPrivate && text === '/help') return sendHelp(message);
 
+  // Reply-keyboard buttons and «🔙 بازگشت» (which also cancels an open question).
+  if (isPrivate && (await handleKeyboardText(message))) return;
+
   // The answer to a question the bot asked (lib/users.js askFor).
   const pending = await takePending(message);
   if (pending === 'feedback') {
-    if (!text) return api.sendMessage({ chat_id: message.chat.id, text: 'لطفاً نظرت رو به صورت متن بفرست 🙏' });
+    const home = { inline_keyboard: [[homeButton()]] };
+    if (!text) {
+      await askFor(message.from, 'feedback');   // still waiting for the text; back cancels it
+      return api.sendMessage({ chat_id: message.chat.id, text: 'لطفاً نظرت رو به صورت متن بفرست 🙏', reply_markup: withBack([], 'home') });
+    }
     try {
       await forwardFeedback(message.from, text.slice(0, FEEDBACK_MAX));
     } catch (e) {
       if (!(e instanceof BotApiError)) throw e;
       console.error('feedback not delivered (has the admin started the bot?)', e.description);
-      return api.sendMessage({ chat_id: message.chat.id, text: 'الان نشد پیامت رو برسونم، کمی بعد دوباره امتحان کن 🙏' });
+      return api.sendMessage({ chat_id: message.chat.id, text: 'الان نشد پیامت رو برسونم، کمی بعد دوباره امتحان کن 🙏', reply_markup: home });
     }
-    return api.sendMessage({ chat_id: message.chat.id, text: 'ممنون، رسید 🙏' });
+    return api.sendMessage({ chat_id: message.chat.id, text: 'ممنون، رسید 🙏', reply_markup: home });
   }
 
   // Anything else (unknown commands, free text in groups) gets no reply.

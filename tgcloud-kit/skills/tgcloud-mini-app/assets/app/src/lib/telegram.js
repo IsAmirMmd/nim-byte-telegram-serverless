@@ -20,6 +20,23 @@ export function useTelegramTheme() {
   }, []);
 }
 
+// Telegram's native back button (top of the Mini App). Every screen except
+// the first must have a way back: it calls useBackButton(goBack) with a
+// function that returns to the previous screen; the first screen calls
+// useBackButton(null), which hides it. Pass a stable function (useCallback).
+// Outside Telegram (a browser) nothing shows: render your own back link there.
+export function useBackButton(onBack) {
+  useEffect(() => {
+    if (!onBack || !atLeast('6.1')) return undefined;
+    tg.BackButton.onClick(onBack);
+    tg.BackButton.show();
+    return () => {
+      tg.BackButton.offClick(onBack);
+      tg.BackButton.hide();
+    };
+  }, [onBack]);
+}
+
 // 'success' | 'warning' | 'error' (Bot API 6.1+; nothing elsewhere).
 export function haptic(type = 'success') {
   if (atLeast('6.1')) tg.HapticFeedback.notificationOccurred(type);

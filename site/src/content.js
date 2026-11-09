@@ -39,7 +39,7 @@ export const content = {
         steps: [
           'اسکیل tgcloud-bot رو خوندم',
           'پروژه ساخته شد: schema، handlers، endpoints',
-          '۱۰ تست آفلاین سبز شد ✓',
+          '۱۵ تست آفلاین سبز شد ✓',
           'npx tgcloud login رو خودت بزن؛ بقیه‌اش با من',
         ],
         botReply: 'سلام 👋 چه کاری برات انجام بدم؟',
@@ -65,7 +65,7 @@ export const content = {
           name: 'tgcloud-bot',
           tag: 'نقطه‌ی شروع',
           body: 'یک پوشه‌ی خالی رو به یک ربات کامل تبدیل می‌کنه و بعد ویژگی‌ها رو روی همون معماری می‌سازه.',
-          points: ['ثبت کاربران، `/stop` و تشخیص بلاک', 'منوی `/start`، دیپ‌لینک و سؤال‌وجواب چندمرحله‌ای', 'ارسال نظر کاربر به ادمین', 'تست آفلاین با SDK شبیه‌سازی‌شده', 'دیپلوی خودکار با GitHub Actions'],
+          points: ['ثبت کاربران، `/stop` و تشخیص بلاک', 'منوی `/start`، دیپ‌لینک و سؤال‌وجواب چندمرحله‌ای', 'دکمه‌ی بازگشت در همه‌ی صفحه‌ها، چه دکمه‌ی شیشه‌ای چه کیبورد', 'ارسال نظر کاربر به ادمین', 'تست آفلاین با SDK شبیه‌سازی‌شده', 'دیپلوی خودکار با GitHub Actions'],
         },
         {
           name: 'tgcloud-endpoints',
@@ -255,7 +255,7 @@ export const content = {
         steps: [
           'Read the tgcloud-bot skill',
           'Project created: schema, handlers, endpoints',
-          '10 offline tests passing ✓',
+          '15 offline tests passing ✓',
           'Run npx tgcloud login yourself; I take it from there',
         ],
         botReply: 'Hi 👋 What can I do for you?',
@@ -281,7 +281,7 @@ export const content = {
           name: 'tgcloud-bot',
           tag: 'Start here',
           body: 'Turns an empty folder into a complete bot, then builds features on the same architecture.',
-          points: ['User tracking, `/stop` and block detection', '`/start` menu, deep links, multi-step input', 'User feedback forwarded to the admin', 'Offline tests on a mock SDK', 'Auto-deploy with GitHub Actions'],
+          points: ['User tracking, `/stop` and block detection', '`/start` menu, deep links, multi-step input', 'A back button on every screen, inline and reply keyboards', 'User feedback forwarded to the admin', 'Offline tests on a mock SDK', 'Auto-deploy with GitHub Actions'],
         },
         {
           name: 'tgcloud-endpoints',

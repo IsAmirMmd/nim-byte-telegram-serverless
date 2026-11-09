@@ -65,7 +65,7 @@ try {
 ## Telegram UI helpers (front-end)
 
 - `Telegram.WebApp.MainButton.setText('Save').show().onClick(save)`, plus `.showProgress()` / `.hideProgress()` around the call.
-- `Telegram.WebApp.BackButton.show().onClick(() => history.back())` for SPA routes.
+- **Every screen except the first has a way back**: `useBackButton(goBack)` from `src/lib/telegram.js` shows Telegram's native back button and calls `goBack` (for example `() => setScreen('home')`, or `history.back()` with a router). The first screen calls `useBackButton(null)`, which hides it. Outside Telegram, render a back link yourself.
 - `Telegram.WebApp.HapticFeedback.notificationOccurred('success')`.
 - `Telegram.WebApp.initDataUnsafe.start_param` holds the `startapp` deep-link value. Trust it only via `ctx.initData.start_param` in an endpoint.
 

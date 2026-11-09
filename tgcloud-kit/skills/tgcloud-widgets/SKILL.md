@@ -156,6 +156,10 @@ Rules, the same as for callback_query:
 - When many users act at once (votes on a shared widget), keep the state in
   the DB and write it to the widget at most once a second.
 - Never put secrets in a widget's code or state: forwards carry them.
+- Like every message, a widget has a way back: send it with
+  `reply_markup: { inline_keyboard: [[homeButton()]] }` (or `withBack([], '<screen>')`)
+  from `lib/menu.js`. Pressing it sends the menu as a new message, because a
+  widget can't be edited into text.
 - `copyMessage` / `copyMessages` refuse widget messages. In groups, the bot
   needs `can_send_other_messages`.
 

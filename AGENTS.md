@@ -41,6 +41,14 @@ Bots made with it live in their own folders and their own git repositories.
    jobs or secrets only when the user asks, following
    [`references/admin-tools.md`](tgcloud-kit/skills/tgcloud-bot/references/admin-tools.md).
 
+8. **Every action has a way back.** In every bot made with the kit, each
+   screen that a button (inline or reply keyboard) or a command opens has a
+   `🔙 بازگشت` button to the screen before it, and a final result has
+   `🏠 منوی اصلی`. Only the root menu has none. The template's `lib/menu.js`
+   adds the back button from each screen's `parent`. Mini App screens use
+   Telegram's BackButton (`useBackButton`). See
+   [`patterns.md`](tgcloud-kit/skills/tgcloud-bot/references/patterns.md#menus-as-screens-always-with-a-way-back).
+
 ## Layout
 
 | Path | What it is |

@@ -59,6 +59,11 @@ export async function askFor(user, action) {
     ON CONFLICT (user_id) DO UPDATE SET pending_action = excluded.pending_action, pending_at = excluded.pending_at`);
 }
 
+// Drops the open question, if any: the user went back or elsewhere (lib/menu.js).
+export async function cancelPending(userId) {
+  await db.run(sql`UPDATE users SET pending_action = NULL, pending_at = NULL WHERE user_id = ${userId} AND pending_action IS NOT NULL`);
+}
+
 // The pending action this message answers, cleared once read; null when there
 // is none or it expired. Call it last in handlers/message.js, after commands.
 export async function takePending(message) {

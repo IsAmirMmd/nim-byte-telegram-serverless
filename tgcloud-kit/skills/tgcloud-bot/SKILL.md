@@ -62,7 +62,7 @@ In the project folder:
 npx -y @tgcloud/cli@0.2.0 init                  # skip if tgcloud/ already exists; writes AGENTS.md, docs/tgcloud-sdk.md, tgcloud.jsonc, git repo
 node "${CLAUDE_SKILL_DIR}/scripts/scaffold.mjs" . --admin <ADMIN_ID> [--mini-app] [--title "<app title>"]
 npm install
-npm test                                          # 7 offline tests (10 with --mini-app) must pass before you change anything
+npm test                                          # 12 offline tests (15 with --mini-app) must pass before you change anything
 ```
 
 The kit's repository also has `scripts/create-bot.mjs`, which does all four
@@ -77,7 +77,7 @@ only replaces the stock `init` versions of `schema.js` and
   - `schema.js`: `settings`, `users`
   - `lib/`: config, settings, users, feedback, access, menu, query, html,
     time, files
-  - `handlers/`: `message` (`/start`, `/stop`, `/help`, feedback),
+  - `handlers/`: `message` (`/start`, `/stop`, `/help`, reply-keyboard buttons and back, feedback),
     `callback_query`, `my_chat_member`
   - `endpoints/`: `me` (the caller's own profile)
 - `test/` (a mock SDK on node:sqlite)
@@ -156,6 +156,13 @@ Code patterns (buttons, upserts, files, channel posts, deep links, ephemeral
 replies) are in [references/patterns.md](references/patterns.md).
 
 Rules that break bots most often (AGENTS.md has the full list):
+- **Every action has a way back.** Every screen a button (inline or reply
+  keyboard) or a command opens has `🔙 بازگشت` to the screen before it, and a
+  final result has `🏠 منوی اصلی`. Only the root has none. Add screens to
+  `SCREENS` / `KEYBOARDS` in `lib/menu.js` with a `parent`, and the back
+  button comes automatically. Use `withBack()` for keyboards a feature builds
+  itself. The navigation test fails when a screen leads nowhere.
+  ([patterns](references/patterns.md#menus-as-screens-always-with-a-way-back))
 - Relative imports **with `.js`**. Import the SDK by name. No npm packages,
   filesystem or env vars at runtime.
 - `await` every DB call.

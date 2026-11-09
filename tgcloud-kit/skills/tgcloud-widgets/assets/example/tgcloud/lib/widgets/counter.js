@@ -9,6 +9,7 @@
 import { api, db } from 'sdk';
 import { sql } from 'sdk/db';
 import HTML from './counter.html.js';
+import { homeButton } from '../menu.js';
 
 const state = (n, r) => JSON.stringify({ n, r });
 
@@ -19,6 +20,7 @@ export async function sendCounter(chatId) {
     caption: '🔢 شمارنده',          // shown in the chat list, notifications and old apps
     chat_data: state(0, 0),
     allow_queries: true,
+    reply_markup: { inline_keyboard: [[homeButton()]] },   // a way back to the menu, like every message
   });
   await db.run(sql`INSERT INTO widget_counters (chat_id, message_id) VALUES (${chatId}, ${sent.message_id})`);
   return sent;

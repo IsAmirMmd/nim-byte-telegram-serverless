@@ -29,6 +29,7 @@ export const users = table('users', {
   unsubscribed:   boolean('unsubscribed').default(false),  // sent /stop
   pending_action: text('pending_action'),               // what the next message answers, e.g. 'feedback'
   pending_at:     integer('pending_at'),
+  keyboard:       text('keyboard'),                     // the reply-keyboard screen the user sees (lib/menu.js), for «🔙 بازگشت»
   feedback_at:    integer('feedback_at'),                // last feedback sent (lib/feedback.js throttle)
   first_seen_at:  integer('first_seen_at').default(sql`(unixepoch())`),
   last_seen_at:   integer('last_seen_at').default(sql`(unixepoch())`),
