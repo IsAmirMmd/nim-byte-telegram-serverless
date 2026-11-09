@@ -3,6 +3,7 @@
 
 export const REPO = 'IsAmirMmd/nim-byte-telegram-serverless';
 export const REPO_URL = `https://github.com/${REPO}`;
+export const PREVIEW_URL = 'https://t.me/tgCloudKit_bot';
 export const CLONE = `git clone https://github.com/${REPO}\ncd nim-byte-telegram-serverless`;
 
 const PLUGIN = `/plugin marketplace add ${REPO}\n/plugin install tgcloud-kit@nim-byte`;
@@ -31,6 +32,7 @@ export const content = {
       lead: 'tgcloud-kit مجموعه‌ای از اسکیل‌ها، یک اسکفولد تست‌شده و یک راهنمای کامله که به ایجنت‌هایی مثل Claude Code، Codex، Cursor، Gemini CLI و Copilot یاد می‌ده یک ربات سرورلس تلگرام رو از صفر بسازن، تست کنن و بالا بیارن. نه سرور لازم داری، نه دیتابیس جدا.',
       primary: 'شروع سریع',
       secondary: 'مخزن در گیت‌هاب',
+      preview: 'امتحان ربات نمونه',
       chat: {
         you: 'شما',
         agent: 'ایجنت',
@@ -247,6 +249,7 @@ export const content = {
       lead: 'tgcloud-kit is a set of skills, a tested scaffold and a guide that teach agents like Claude Code, Codex, Cursor, Gemini CLI and Copilot to build a Telegram Serverless bot from scratch, test it and ship it. No server, no separate database.',
       primary: 'Quick start',
       secondary: 'GitHub repository',
+      preview: 'Try the live bot',
       chat: {
         you: 'You',
         agent: 'Agent',
