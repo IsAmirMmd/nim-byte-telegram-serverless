@@ -15,11 +15,18 @@ const store = {
   },
 };
 
+// English by default. A language is remembered only when the visitor picks it
+// with the switch ('lang-choice'); ?lang=fa|en links work too. The old 'lang'
+// key was saved on every visit (when Persian was the default), so it is ignored
+// and removed.
+const LANG_KEY = 'lang-choice';
+
 function initialLang() {
+  store.set('lang', null);
   const fromUrl = new URLSearchParams(window.location.search).get('lang');
   if (fromUrl === 'fa' || fromUrl === 'en') return fromUrl;
-  const saved = store.get('lang');
-  return saved === 'en' || saved === 'fa' ? saved : 'en';   // English by default
+  const chosen = store.get(LANG_KEY);
+  return chosen === 'en' || chosen === 'fa' ? chosen : 'en';
 }
 
 function useLang() {
@@ -30,9 +37,13 @@ function useLang() {
     root.lang = t.lang;
     root.dir = t.dir;
     document.title = t.title;
-    store.set('lang', lang);
   }, [lang, t]);
-  return [t, () => setLang((l) => (l === 'fa' ? 'en' : 'fa'))];
+  const toggle = () => setLang((l) => {
+    const next = l === 'fa' ? 'en' : 'fa';
+    store.set(LANG_KEY, next);   // the visitor's own choice
+    return next;
+  });
+  return [t, toggle];
 }
 
 function useTheme() {
