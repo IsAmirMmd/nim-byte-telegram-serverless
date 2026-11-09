@@ -3,6 +3,7 @@
 Skills for building Telegram bots on Telegram Serverless (tgcloud) with an AI agent.
 Full guide (Persian and English): the [repository README](../README.md) and the
 [guide site](https://isamirmmd.github.io/nim-byte-telegram-serverless/).
+Try what it builds: [@tgCloudKit_bot](https://t.me/tgCloudKit_bot), the live preview.
 
 ```
 /plugin marketplace add IsAmirMmd/nim-byte-telegram-serverless

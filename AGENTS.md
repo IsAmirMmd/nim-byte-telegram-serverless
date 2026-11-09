@@ -61,13 +61,20 @@ Bots made with it live in their own folders and their own git repositories.
 | `.claude/skills/` | Pointers so Claude Code finds the skills when this repo is opened |
 | `scripts/create-bot.mjs` | One command: init + scaffold + install + tests (also `npx github:IsAmirMmd/nim-byte-telegram-serverless`) |
 | `site/` | The guide website (React + Vite, Persian and English), deployed to GitHub Pages |
+| `.github/workflows/preview.yml` | The live preview: deploys the bot the kit creates (with the Mini App) to @tgCloudKit_bot on every push to `main` that changes the kit |
 
 ## Working on the kit itself
 
 - After changing the template, the Mini App starter or the scaffold, create a
   bot in a temporary folder and run its tests:
   `node scripts/create-bot.mjs /tmp/kit-check --admin 123456789 --mini-app`.
-  `.github/workflows/kit.yml` does the same on every push.
+  `.github/workflows/kit.yml` does the same on every push, and
+  `.github/workflows/preview.yml` deploys the result to the live preview bot
+  (@tgCloudKit_bot) once it reaches `main`.
+- Its secrets live only in the `preview` environment (limited to `main`).
+  Never trigger a workflow that uses secrets with `pull_request_target`, and
+  never print a secret. If the template's `deploy.yml` changes, change the same
+  steps in `preview.yml`.
 - Keep everything generic: no real bot ids, app ids, tokens, user ids, admin
   routes or code copied from a live bot.
 - **When the Bot API changes**, read the changelog

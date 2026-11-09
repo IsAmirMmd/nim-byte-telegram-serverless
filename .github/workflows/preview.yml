@@ -1,0 +1,107 @@
+# The live preview: @tgCloudKit_bot runs exactly what the kit creates today.
+# On every push to main that changes the kit, it creates a fresh bot with
+# scripts/create-bot.mjs (with the Mini App), runs its tests, and deploys it.
+#
+# Secrets: only from the `preview` environment, which is limited to the main
+# branch (Settings → Environments → preview):
+#   secret   PREVIEW_TGCLOUD_TOKEN   the preview bot's CLI token (BotFather → bot → Serverless → CLI Access)
+#   variable PREVIEW_ADMIN_ID        the numeric Telegram id that receives feedback
+# Forks never get these: secrets aren't copied to forks, this job is skipped
+# outside this repository, and it never runs for pull requests.
+# Never trigger it with pull_request_target.
+name: Live preview
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tgcloud-kit/**'
+      - 'scripts/create-bot.mjs'
+      - '.github/workflows/preview.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.repository == 'IsAmirMmd/nim-byte-telegram-serverless'
+    runs-on: ubuntu-latest
+    environment:
+      name: preview
+      url: https://t.me/tgCloudKit_bot
+    env:
+      TGCLOUD_TOKEN: ${{ secrets.PREVIEW_TGCLOUD_TOKEN }}
+      ADMIN_ID: ${{ vars.PREVIEW_ADMIN_ID }}
+      BOT: /tmp/preview-bot
+    steps:
+      - name: Check the settings
+        run: |
+          if [ -z "$TGCLOUD_TOKEN" ]; then echo "::error::The preview environment has no PREVIEW_TGCLOUD_TOKEN secret."; exit 1; fi
+          if ! printf '%s' "$ADMIN_ID" | grep -qE '^[0-9]+$'; then echo "::error::PREVIEW_ADMIN_ID must be a numeric Telegram id."; exit 1; fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # `tgcloud init` makes the bot's first git commit.
+      - run: |
+          git config --global user.name "kit-preview"
+          git config --global user.email "kit-preview@users.noreply.github.com"
+          git config --global init.defaultBranch main
+      # init + scaffold + npm install + npm test: a failing test stops the deploy.
+      - name: Create the bot from the kit
+        run: node scripts/create-bot.mjs "$BOT" --admin "$ADMIN_ID" --mini-app
+      # The Mini App's address comes from the token (app<id>:<secret> →
+      # https://app<id>.tgcloud.ai/), so no id is written in this repository.
+      - name: Point the bot at its Mini App
+        working-directory: ${{ env.BOT }}
+        run: |
+          host="${TGCLOUD_TOKEN%%:*}"
+          if printf '%s' "$host" | grep -qE '^app[0-9]+$'; then
+            sed -i "s#^export const MINI_APP_URL = '';#export const MINI_APP_URL = 'https://${host}.tgcloud.ai/';#" tgcloud/lib/config.js
+            grep -q "tgcloud.ai" tgcloud/lib/config.js || { echo "::error::MINI_APP_URL not set: lib/config.js changed shape"; exit 1; }
+          else
+            echo "::warning::The token isn't app<id>:<secret>; the menu has no Mini App button."
+          fi
+      - name: Build the Mini App
+        working-directory: ${{ env.BOT }}
+        run: npm run build
+      # The same steps as the bot template's .github/workflows/deploy.yml: keep them in sync.
+      # fetch learns the cloud's revision; push makes the cloud match this fresh bot
+      # (modules that exist only in the cloud are deleted). push's exit code is not
+      # the verdict (CLI 0.2.0 can crash after the server accepted the deploy): Verify is.
+      - name: Deploy
+        working-directory: ${{ env.BOT }}
+        run: |
+          mkdir -p .tgcloud
+          npx tgcloud fetch
+          npx tgcloud push || echo "::warning::tgcloud push exited with an error; the Verify step checks what the cloud runs"
+      # Added tables, columns and indexes only; anything that drops data is skipped.
+      - name: Migrate
+        if: always()
+        working-directory: ${{ env.BOT }}
+        run: |
+          mkdir -p .tgcloud
+          npx tgcloud migrate --safe
+      - name: Webhook
+        if: always()
+        working-directory: ${{ env.BOT }}
+        run: |
+          mkdir -p .tgcloud
+          npx tgcloud webhook sync
+      - name: Verify
+        working-directory: ${{ env.BOT }}
+        env:
+          FORCE_COLOR: '0'
+        run: |
+          npx tgcloud fetch
+          out="$(npx tgcloud status 2>&1)"
+          echo "$out"
+          if printf '%s\n' "$out" | sed 's/\x1b\[[0-9;]*m//g' | grep -qE '^(Modified|New \(not yet deployed\)|Not yet deployed|Deleted locally|Warning: No local snapshot)'; then
+            echo "::error::The preview bot does not run what the kit creates: see the lists above."
+            exit 1
+          fi

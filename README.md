@@ -17,6 +17,8 @@
 
 📖 **سایت راهنما:** https://isamirmmd.github.io/nim-byte-telegram-serverless/
 
+🤖 **پیش‌نمایش زنده:** [@tgCloudKit_bot](https://t.me/tgCloudKit_bot). رباتی که کیت در همین لحظه می‌سازد (همراه با مینی‌اپ). با هر تغییر کیت، از نو ساخته و دیپلوی می‌شود.
+
 ## داخلش چیست
 
 | اسکیل | کارش |
@@ -252,7 +254,8 @@ nim-byte-telegram-serverless/
 ├─ site/                            ← the guide site (React + Vite, fa + en)
 └─ .github/workflows/
    ├─ pages.yml                     ← deploys site/ to GitHub Pages
-   └─ kit.yml                       ← creates a bot from the kit and runs its tests
+   ├─ kit.yml                       ← creates a bot from the kit and runs its tests
+   └─ preview.yml                   ← deploys the kit's bot to @tgCloudKit_bot (live preview)
 ```
 
 <div dir="rtl">
@@ -294,6 +297,15 @@ npm --prefix site run dev
 <div dir="rtl">
 
 متن‌های سایت (فارسی و انگلیسی) در `site/src/content.js` هستند. در فورک‌ها هم همین تنظیم Pages کافی است، چون سایت با مسیر نسبی ساخته می‌شود.
+
+## پیش‌نمایش زنده
+
+[@tgCloudKit_bot](https://t.me/tgCloudKit_bot) همان رباتی است که `scripts/create-bot.mjs --mini-app` می‌سازد. با هر push به `main` که کیت را تغییر دهد، workflow ‏`preview.yml` این کارها را انجام می‌دهد:
+1. یک ربات تازه از کیت می‌سازد و تست‌هایش را اجرا می‌کند. اگر تستی رد شود، دیپلوی انجام نمی‌شود.
+2. مینی‌اپ را بیلد می‌کند.
+3. ربات را با `push`، ‏`migrate --safe` و `webhook sync` دیپلوی می‌کند و بررسی می‌کند که ابر دقیقاً همان کد را اجرا کند.
+
+توکن و آیدی ادمین فقط در environment ‏`preview` مخزن نگه داشته می‌شوند (secret ‏`PREVIEW_TGCLOUD_TOKEN` و variable ‏`PREVIEW_ADMIN_ID`) و این environment فقط به برنچ `main` دسترسی دارد. فورک‌ها به آن‌ها دسترسی ندارند: secretها در فورک کپی نمی‌شوند، این workflow بیرون از همین مخزن اجرا نمی‌شود و برای pull request هم اجرا نمی‌شود.
 
 ## لایسنس
 
@@ -343,6 +355,8 @@ npx tgcloud status     # local changes not yet in the cloud
 Then send `/start` to the bot and set its commands in BotFather (`/setcommands`). For deploy on every push to `main`, put the bot in its own GitHub repo and add the `TGCLOUD_TOKEN` secret.
 
 **Admin tools are built only on request.** The template has no admin routes or commands (no `/api/sql`, `/stats`, `/backup`, admin panel or cron job). Ask your agent ("add `npm run sql`", "add `/stats` and `/backup`", "build an admin panel", "send me a report every morning") and it follows [`admin-tools.md`](tgcloud-kit/skills/tgcloud-bot/references/admin-tools.md): `requireAdmin` first, a refused-caller test, failures reported to the admin. Once added: `npm run sql -- "SELECT * FROM users LIMIT 5"`.
+
+**Live preview:** [@tgCloudKit_bot](https://t.me/tgCloudKit_bot) runs exactly what `scripts/create-bot.mjs --mini-app` creates. `preview.yml` rebuilds, tests and deploys it on every push to `main` that changes the kit. Its token and admin id live only in the `preview` environment (limited to `main`), so forks and pull requests never see them.
 
 **Guide site:** `site/` (React + Vite). Enable it once with Settings → Pages → Source: GitHub Actions; `pages.yml` deploys it on every push to `main`.
 

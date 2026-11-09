@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
-import { content, REPO_URL, TREE } from './content.js';
+import { content, REPO_URL, PREVIEW_URL, TREE } from './content.js';
 
 // ---------- preferences (language, theme): per-browser conveniences ----------
 
@@ -210,6 +210,7 @@ function Hero({ t }) {
           <div className="hero__cta">
             <a className="btn btn--primary" href="#start">{h.primary}</a>
             <a className="btn" href={REPO_URL}>{Icon.github}<span>{h.secondary}</span></a>
+            <a className="btn" href={PREVIEW_URL} target="_blank" rel="noopener"><span aria-hidden="true">🤖</span><span>{h.preview}</span></a>
           </div>
         </div>
         <ChatDemo chat={h.chat} />
