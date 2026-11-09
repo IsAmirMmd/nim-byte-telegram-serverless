@@ -5,7 +5,8 @@
 //                     [--no-claude-settings]
 //
 // - Bot: tgcloud/ (schema, lib, handlers, endpoints), test/ (offline tests on
-//   a mock SDK), .github/workflows/deploy.yml, docs/ARCHITECTURE.md, npm scripts.
+//   a mock SDK), .github/workflows/deploy.yml, docs/ARCHITECTURE.md,
+//   docs/BOT-API.md, npm scripts.
 //   No admin routes or admin commands: those are added on request (the
 //   tgcloud-bot skill's references/admin-tools.md).
 // - --mini-app: a React + Vite front-end that follows the Telegram theme, its
@@ -46,6 +47,7 @@ const BOT_TEMPLATE = join(SKILLS, 'tgcloud-bot', 'assets', 'template');
 const APP_TEMPLATE = join(SKILLS, 'tgcloud-mini-app', 'assets', 'app');
 const ARCHITECTURE = join(SKILLS, 'tgcloud-bot', 'references', 'architecture.md');
 const ADMIN_TOOLS = join(SKILLS, 'tgcloud-bot', 'references', 'admin-tools.md');
+const BOT_API = join(SKILLS, 'tgcloud-bot', 'references', 'bot-api.md');
 
 // The marketplace that serves this kit (see the repo's .claude-plugin/marketplace.json).
 const MARKETPLACE = { name: 'nim-byte', repo: 'IsAmirMmd/nim-byte-telegram-serverless' };
@@ -108,6 +110,7 @@ console.log(`tgcloud-kit → ${resolve(dir)}${fresh ? '' : '  (existing project:
 copyTree(BOT_TEMPLATE, '', (rel) => fresh || INFRA.test(rel));
 place(ARCHITECTURE, 'docs/ARCHITECTURE.md');
 place(ADMIN_TOOLS, 'docs/ADMIN-TOOLS.md');
+place(BOT_API, 'docs/BOT-API.md');
 
 if (miniApp) {
   // The Mini App's endpoint needs the template's lib (lib/feedback.js): a fresh
@@ -206,6 +209,10 @@ naming, the command/test patterns and the deploy pipeline. In short:
 handlers and endpoints stay thin and call \`tgcloud/lib/\`; every feature gets a
 test in \`test/\` (\`npm test\`, offline); new columns on existing tables are
 nullable; pushing to \`main\` deploys.
+
+The Bot API (10.4) as this project uses it: [docs/BOT-API.md](docs/BOT-API.md):
+which update types exist (one \`handlers/<type>.js\` each), and newer features
+such as ephemeral messages, rich messages, streaming drafts and widgets.
 
 Admin-only tools (\`npm run sql\`, admin chat commands, admin Mini App
 endpoints, scheduled jobs, secrets) are not built in. Add one only when the

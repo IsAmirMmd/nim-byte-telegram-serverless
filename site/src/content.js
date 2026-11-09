@@ -59,7 +59,7 @@ export const content = {
 
     skills: {
       title: 'اسکیل‌ها',
-      lead: 'سه اسکیل که هر ایجنتی می‌تونه بخونه. در Claude Code به‌صورت پلاگین نصب می‌شن؛ بقیه‌ی ایجنت‌ها از طریق `AGENTS.md` بهشون می‌رسن.',
+      lead: 'چهار اسکیل که هر ایجنتی می‌تونه بخونه. در Claude Code به‌صورت پلاگین نصب می‌شن؛ بقیه‌ی ایجنت‌ها از طریق `AGENTS.md` بهشون می‌رسن.',
       items: [
         {
           name: 'tgcloud-bot',
@@ -78,6 +78,12 @@ export const content = {
           tag: 'فرانت‌اند',
           body: 'مینی‌اپ React + Vite که رنگ‌هاش رو از تم خود تلگرام می‌گیره و کنار ربات روی `app<id>.tgcloud.ai` میزبانی می‌شه.',
           points: ['انتخاب دیزاین سیستم: پیش‌فرض (تم تلگرام) یا دیزاین خودت', 'استارتر آماده: پروفایل و فرم ارسال نظر', 'تمام‌صفحه، safe area و تم روشن/تاریک', 'هوک `useEndpoint` و `callEndpoint`', 'تنظیم `tgcloud.jsonc` و دیپلوی'],
+        },
+        {
+          name: 'tgcloud-widgets',
+          tag: 'Bot API 10.4',
+          body: 'ویجت‌های HTML داخل خود پیام: بلوک‌های کوچک و تعاملی که توی چت می‌مونن، مثل شمارنده، نظرسنجی زنده یا یک بازی کوچک.',
+          points: ['`sendWidget` و هندلر `widget_query`', 'وضعیت ویجت که فقط ربات می‌نویسه', 'بررسی حجم (حداکثر ۴ کیلوبایت فشرده)', 'پرداخت با کیف پول TON', 'نمونه‌ی شمارنده با تست'],
         },
       ],
     },
@@ -269,7 +275,7 @@ export const content = {
 
     skills: {
       title: 'Skills',
-      lead: 'Three skills any agent can read. Claude Code installs them as a plugin; other agents reach them through `AGENTS.md`.',
+      lead: 'Four skills any agent can read. Claude Code installs them as a plugin; other agents reach them through `AGENTS.md`.',
       items: [
         {
           name: 'tgcloud-bot',
@@ -288,6 +294,12 @@ export const content = {
           tag: 'Front-end',
           body: 'A React + Vite Mini App that takes its colors from the Telegram theme and is hosted next to the bot at `app<id>.tgcloud.ai`.',
           points: ['Pick a design system: default (Telegram theme) or your own', 'Starter: profile and feedback form', 'Fullscreen, safe areas, light/dark', '`useEndpoint` hook and `callEndpoint`', '`tgcloud.jsonc` config and deploy'],
+        },
+        {
+          name: 'tgcloud-widgets',
+          tag: 'Bot API 10.4',
+          body: 'HTML widgets inside the message itself: small interactive blocks that stay in the chat, like a counter, a live poll or a small game.',
+          points: ['`sendWidget` and the `widget_query` handler', 'Widget state that only the bot writes', 'Size check (4 KB compressed at most)', 'Payments with the TON wallet', 'A counter example with tests'],
         },
       ],
     },

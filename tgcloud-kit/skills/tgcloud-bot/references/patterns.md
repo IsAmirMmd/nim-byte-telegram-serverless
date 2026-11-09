@@ -50,7 +50,27 @@ export async function refreshButtons(chatId, messageId, itemId) {
 callback_data is at most **64 bytes**. Keep it `<feature>:<action>:<id>`.
 
 Buttons can carry `style: 'primary' | 'success' | 'danger'` (blue, green, red),
-`url`, `web_app: { url }` (opens the Mini App), or `copy_text: { text }`.
+`url`, `web_app: { url }` (opens the Mini App), or `copy_text: { text }`. A
+button with `disabled: {}` (Bot API 10.3) is greyed out and does nothing, which
+suits "already voted" or "sold out". Other button fields are in
+[bot-api.md](bot-api.md#buttons-and-keyboards).
+
+## A private answer to a button press (ephemeral)
+
+In a group, answer only the user who pressed (Bot API 10.4). The rest of the
+group sees nothing:
+
+```js
+await api.answerCallbackQuery({ callback_query_id: query.id });   // still required
+await api.sendMessage({
+  text: 'فقط خودت این رو می‌بینی 👀',
+  ephemeral_message_parameters: { callback_query_id: query.id },   // no chat_id needed
+});
+```
+
+Add `replace_callback_query_message: true` to show it *in place of* the
+message, for that user only. More (receiver_user_id, edits, ephemeral
+commands): [bot-api.md](bot-api.md#ephemeral-messages).
 
 ## Menus as screens
 
@@ -156,6 +176,9 @@ in a table, stops on a 429, and continues on the next run.
 ## Webhook
 
 The deployed `handlers/*` decide which update types the bot receives. For
-example, `chat_member` arrives only once `handlers/chat_member.js` exists. If
+example, `chat_member` arrives only once `handlers/chat_member.js` exists. The
+full list of update types, including the ones added in Bot API 10.x
+(`guest_message`, `widget_query`, `shared_widget_query`, `subscription`,
+`stopped_message_generation`), is in [bot-api.md](bot-api.md#update-types--handler-files). If
 updates stop arriving, run `npx tgcloud webhook`, and `npx tgcloud webhook sync`
 when it doesn't match. CI syncs on every deploy.

@@ -1,0 +1,49 @@
+<style>
+body{margin:0;padding:10px 14px 12px;text-align:center}
+.n{font-size:2.4em;font-weight:600;font-variant-numeric:tabular-nums;margin:2px 0 8px}
+.row{display:flex;gap:8px}
+.row button{flex:1;font-size:1.2em}
+.s{color:var(--tg-theme-hint-color);font-size:.85em;min-height:1.3em;margin-top:6px}
+.e{color:var(--tg-theme-destructive-text-color)}
+</style>
+<div class="n" id="n">0</div>
+<div class="row" dir="ltr"><button data-a="dec">−</button><button data-a="reset">↺</button><button data-a="inc">+</button></div>
+<div class="s" id="s"></div>
+<script>
+const W = window.TelegramWidget, $ = (id) => document.getElementById(id);
+const fmt = new Intl.NumberFormat(navigator.language);
+const ERR = { NOT_ALLOWED: 'برای تغییر، ربات رو باز کن', RATE_LIMITED: 'کمی آهسته‌تر 🙂', TIMEOUT: 'ربات جواب نداد', gone: 'این شمارنده دیگه فعال نیست' };
+let rev = -1;
+function show(text) {
+  let d = null;
+  try { d = JSON.parse(text); } catch (e) {}
+  if (!d) return;
+  if (d.e) return status(ERR[d.e] || 'خطا', true);
+  if (d.r < rev) return;
+  rev = d.r;
+  $('n').textContent = fmt.format(d.n);
+}
+function status(text, bad) {
+  $('s').textContent = text;
+  $('s').className = bad ? 's e' : 's';
+}
+function busy(on) {
+  for (const b of document.querySelectorAll('button')) b.disabled = on;
+}
+for (const b of document.querySelectorAll('button')) {
+  b.addEventListener('click', () => {
+    if (!W) return;
+    const req = W.request('count:' + b.dataset.a);
+    busy(true);
+    status('…');
+    req.then((a) => { status(''); show(a.result); W.HapticFeedback.selectionChanged(); },
+      (e) => status(ERR[e.code] || 'ارسال نشد: ' + e.code, true))
+      .finally(() => busy(false));
+  });
+}
+if (W) {
+  W.onEvent('chatDataChanged', () => show(W.chatData));
+  show(W.chatData);
+  W.ready();
+}
+</script>

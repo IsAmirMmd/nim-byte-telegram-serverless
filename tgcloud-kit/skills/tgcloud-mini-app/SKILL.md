@@ -16,6 +16,11 @@ The front-end never imports `tgcloud/` code. It talks to the server **only** thr
 
 Source: https://core.telegram.org/bots/serverless#mini-app-front-end. Re-check it with WebFetch if something here doesn't match the CLI's behavior.
 
+Something small that should live **inside a message** (a counter, a poll, a
+price, a code to copy) is a widget (Bot API 10.4), not a Mini App. Use the
+`tgcloud-widgets` skill. A widget can open the Mini App with
+`openTelegramLink('https://t.me/<bot>/<app>')`.
+
 ## Step 1: Inspect the project
 
 - Is there a `tgcloud/` folder? If not, set up the bot first (the `tgcloud-bot` skill, or `npm create @tgcloud/bot .`). Read the project's `AGENTS.md`, since it holds the module rules.
@@ -81,6 +86,7 @@ The scaffold adds only the missing files. Build new pages on that starter rather
    In fullscreen, Telegram's buttons overlay the page. Pad the top and bottom with `var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px)` (and `-bottom`). `telegram-web-app.js` sets these variables, and they update on the `safeAreaChanged` / `contentSafeAreaChanged` events. Call `setHeaderColor` so the status bar stays readable. Also available: `exitFullscreen()`, `isFullscreen`, the `fullscreenChanged` event, and `disableClosingConfirmation()`. Docs: https://core.telegram.org/bots/webapps
 4. `initDataUnsafe` is for display only (name, photo). Anything that needs trust goes through an endpoint, which receives **verified** init data.
 5. Keep the bundler's `base` at `/`. Never put files under `/api/` in the build output. Don't set `X-Frame-Options` or a restrictive `frame-ancestors`, because Telegram Web loads the app in an iframe.
+6. **Same origin only** (Bot API 10.2, on for every Mini App since July 20, 2026): `Telegram.WebApp` methods work only from the Mini App's own origin, `https://app<app_id>.tgcloud.ai`. Keep every screen on that host. A page on another domain (an external checkout, a redirect, another site in an iframe) can't call them. Set exactly the URL that `push` printed in BotFather. BotFather can turn the protection off, but then the bot is responsible for the app linking to no untrusted site, so leave it on.
 
 ## Step 3: Configure static hosting (`tgcloud.jsonc`)
 
