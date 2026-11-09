@@ -32,9 +32,11 @@ export const TEXTS = {
     language_button: '🌐 Language',
     language: '🌐 Choose your language:',
     stopped: '🔕 OK, you won\'t get messages from us anymore.\nSend /start whenever you want to come back.',
-    // The command list Telegram shows (lib/menu.js syncCommands)
+    // Telegram's own setup (lib/menu.js syncBotSetup): the "/" list, and the
+    // Mini App button next to the input field (short: it's a small button)
     cmd_start: 'Main menu',
     cmd_help: 'Help',
+    menu_button: 'Open app',
     // Mini App endpoint errors (endpoints/feedback.js)
     err_empty: 'The message is empty.',
     err_too_long: (max) => `A message can be at most ${max} characters.`,
@@ -59,6 +61,7 @@ export const TEXTS = {
     stopped: '🔕 باشه، دیگه پیامی ازمون نمی‌گیری.\nهر وقت خواستی برگردی، /start رو بزن.',
     cmd_start: 'منوی اصلی',
     cmd_help: 'راهنما',
+    menu_button: 'باز کردن اپ',
     err_empty: 'متن پیام خالیه.',
     err_too_long: (max) => `پیام حداکثر ${Number(max).toLocaleString('fa-IR')} کاراکتر می‌تونه باشه.`,
     err_not_started: 'اول ربات رو استارت کن، بعد پیام بده.',

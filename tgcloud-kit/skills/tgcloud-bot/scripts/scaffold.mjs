@@ -258,7 +258,7 @@ Next:
   npx tgcloud login        # link to the bot (interactive: BotFather → bot → Serverless → CLI Access)
   npm run deploy           # push the code${miniApp ? ' (and the built Mini App)' : ''}
   npx tgcloud migrate      # create the tables
-  then send /start to the bot from the admin account (it also sets the command
-  list, in English and Persian)
+  then send /start to the bot: it sets its command list (English and Persian)
+  and, once MINI_APP_URL is set, the Mini App button next to the input field
   Admin tools (npm run sql, /stats, an admin panel…) are not included: ask your
   AI agent to add the ones you need.`);
