@@ -4,8 +4,11 @@ export const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '
 
 export const link = (url, text) => (url ? `<a href="${esc(url)}">${esc(text)}</a>` : esc(text));
 
-// Numbers with Persian digits; switch the locale for other languages.
+// Numbers with Persian digits, for Persian texts (lib/i18n.js).
 export const fa = (n) => Number(n ?? 0).toLocaleString('fa-IR');
+
+// A number in the user's language: 1,234 (en) or ۱٬۲۳۴ (fa).
+export const number = (lang, n) => Number(n ?? 0).toLocaleString(lang === 'fa' ? 'fa-IR' : 'en-US');
 
 // 0.1234 → "۱۲٫۳٪"
 export const faPercent = (ratio) => `${Number((ratio * 100).toFixed(1)).toLocaleString('fa-IR')}٪`;

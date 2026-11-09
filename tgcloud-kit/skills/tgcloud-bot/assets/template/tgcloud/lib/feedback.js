@@ -1,5 +1,5 @@
 // Feedback from users to the admin (ADMIN_ID in config.js). The bot's
-// «💬 ارسال نظر» button (handlers/message.js) and, in a project with the
+// «💬 Send feedback» button (handlers/message.js) and, in a project with the
 // Mini App, its form (endpoints/feedback.js) both end here.
 
 import { api, db } from 'sdk';

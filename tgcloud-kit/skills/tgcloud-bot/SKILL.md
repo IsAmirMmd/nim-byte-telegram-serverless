@@ -75,8 +75,8 @@ only replaces the stock `init` versions of `schema.js` and
 
 - `tgcloud/`:
   - `schema.js`: `settings`, `users`
-  - `lib/`: config, settings, users, feedback, access, menu, query, html,
-    time, files
+  - `lib/`: config, settings, users, feedback, access, menu, i18n, query,
+    html, time, files
   - `handlers/`: `message` (`/start`, `/stop`, `/help`, reply-keyboard buttons and back, feedback),
     `callback_query`, `my_chat_member`
   - `endpoints/`: `me` (the caller's own profile)
@@ -119,8 +119,9 @@ npm run deploy                        # push the code (builds the Mini App first
 npx tgcloud migrate                   # create the tables (interactive; or `npx tgcloud migrate --safe`)
 ```
 
-Then the admin sends `/start` to the bot. The command list goes in BotFather
-(`/setcommands` → `start - شروع`, `help - راهنما`). With a Mini App, set the URL
+Then the admin sends `/start` to the bot, which also sets its command list in
+English and Persian (`syncCommands()`), so there is nothing to set with
+`/setcommands`. With a Mini App, set the URL
 that `push` printed in BotFather (menu button / Mini App) and in
 `MINI_APP_URL` (`lib/config.js`).
 
@@ -157,10 +158,10 @@ replies) are in [references/patterns.md](references/patterns.md).
 
 Rules that break bots most often (AGENTS.md has the full list):
 - **Every action has a way back.** Every screen a button (inline or reply
-  keyboard) or a command opens has `🔙 بازگشت` to the screen before it, and a
-  final result has `🏠 منوی اصلی`. Only the root has none. Add screens to
+  keyboard) or a command opens has `🔙 Back` to the screen before it, and a
+  final result has `🏠 Main menu`. Only the root has none. Add screens to
   `SCREENS` / `KEYBOARDS` in `lib/menu.js` with a `parent`, and the back
-  button comes automatically. Use `withBack()` for keyboards a feature builds
+  button comes automatically. Use `withBack(lang, …)` for keyboards a feature builds
   itself. The navigation test fails when a screen leads nowhere.
   ([patterns](references/patterns.md#menus-as-screens-always-with-a-way-back))
 - Relative imports **with `.js`**. Import the SDK by name. No npm packages,
@@ -170,8 +171,13 @@ Rules that break bots most often (AGENTS.md has the full list):
 - `push` never changes the DB. Schema changes need `migrate`.
 - Every endpoint can be called by every Mini App user. Authorize from
   `ctx.initData.user.id` inside each one, and validate `input`.
-- User-facing copy is Persian by default (the template's). Change it if the
-  bot targets another language.
+- **English by default, and bilingual.** Every user-facing text goes in
+  `lib/i18n.js`, in English and Persian (`t(lang, 'key')`, with
+  `const lang = await userLang(user)`). Never hard-code user text in handlers
+  or lib modules. Users switch languages in the 🌐 Language screen; otherwise
+  their Telegram app's language decides (Persian for `fa`, English for
+  everything else). The Mini App follows the same choice
+  ([architecture](references/architecture.md#5-conventions)).
 
 ## Step 5: Auto-deploy
 

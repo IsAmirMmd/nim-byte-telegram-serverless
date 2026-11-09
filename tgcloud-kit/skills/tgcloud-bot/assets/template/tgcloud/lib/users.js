@@ -5,6 +5,7 @@ import { api, db } from 'sdk';
 import { sql } from 'sdk/db';
 import { now } from './time.js';
 import { num } from './query.js';
+import { t, pickLang, LANGS } from './i18n.js';
 
 // How long the bot waits for the answer to a question (askFor → takePending).
 const PENDING_WINDOW = 15 * 60;
@@ -47,7 +48,23 @@ export async function setBlocked(userId, blocked) {
 // /stop: no more broadcasts until the next /start.
 export async function unsubscribe(message) {
   await db.run(sql`UPDATE users SET unsubscribed = 1 WHERE user_id = ${message.from.id}`);
-  await api.sendMessage({ chat_id: message.chat.id, text: '🔕 باشه، دیگه پیامی ازمون نمی‌گیری.\nهر وقت خواستی برگردی، /start رو بزن.' });
+  await api.sendMessage({ chat_id: message.chat.id, text: t(await userLang(message.from), 'stopped') });
+}
+
+// The language to answer `user` (a Telegram User) in: their choice in the
+// 🌐 Language screen, else their Telegram app's language, else English (lib/i18n.js).
+export async function userLang(user) {
+  if (!user?.id) return pickLang(null, user?.language_code);
+  const row = await db.get(sql`SELECT lang FROM users WHERE user_id = ${user.id}`);
+  return pickLang(row?.lang, user.language_code);
+}
+
+// The 🌐 Language screen: remember the user's choice.
+export async function setLang(user, lang) {
+  if (!LANGS[lang]) return;
+  await db.run(sql`
+    INSERT INTO users (user_id, username, first_name, lang) VALUES (${user.id}, ${user.username ?? null}, ${user.first_name ?? null}, ${lang})
+    ON CONFLICT (user_id) DO UPDATE SET lang = excluded.lang`);
 }
 
 // Multi-step input: remember that the user's next message answers `action`
@@ -78,8 +95,9 @@ export async function takePending(message) {
 // The user's own row, for the Mini App's `me` endpoint. Never pass it an id
 // from client input: endpoints take it from ctx.initData.user.
 export async function profileOf(userId) {
-  const row = await db.get(sql`SELECT start_count, first_seen_at FROM users WHERE user_id = ${userId}`);
+  const row = await db.get(sql`SELECT start_count, first_seen_at, lang FROM users WHERE user_id = ${userId}`);
   return {
+    lang: row?.lang ?? null,   // chosen in the bot; the Mini App falls back to Telegram's language
     started: num(row?.start_count) > 0,
     start_count: num(row?.start_count),
     first_seen_at: row?.first_seen_at == null ? null : num(row.first_seen_at),

@@ -1,4 +1,4 @@
-// Every text on the site, in Persian (default) and English.
+// Every text on the site, in English (the default) and Persian.
 // Inline `code` and **bold** are supported in strings (see Rich in App.jsx).
 
 export const REPO = 'IsAmirMmd/nim-byte-telegram-serverless';
@@ -67,7 +67,7 @@ export const content = {
           name: 'tgcloud-bot',
           tag: 'نقطه‌ی شروع',
           body: 'یک پوشه‌ی خالی رو به یک ربات کامل تبدیل می‌کنه و بعد ویژگی‌ها رو روی همون معماری می‌سازه.',
-          points: ['ثبت کاربران، `/stop` و تشخیص بلاک', 'منوی `/start`، دیپ‌لینک و سؤال‌وجواب چندمرحله‌ای', 'دکمه‌ی بازگشت در همه‌ی صفحه‌ها، چه دکمه‌ی شیشه‌ای چه کیبورد', 'ارسال نظر کاربر به ادمین', 'تست آفلاین با SDK شبیه‌سازی‌شده', 'دیپلوی خودکار با GitHub Actions'],
+          points: ['ثبت کاربران، `/stop` و تشخیص بلاک', 'منوی `/start`، دیپ‌لینک و سؤال‌وجواب چندمرحله‌ای', 'دکمه‌ی بازگشت در همه‌ی صفحه‌ها، چه دکمه‌ی شیشه‌ای چه کیبورد', 'دو زبانه: انگلیسی (پیش‌فرض) و فارسی', 'ارسال نظر کاربر به ادمین', 'تست آفلاین با SDK شبیه‌سازی‌شده', 'دیپلوی خودکار با GitHub Actions'],
         },
         {
           name: 'tgcloud-endpoints',
@@ -142,7 +142,7 @@ export const content = {
       steps: [
         { title: 'اتصال به ربات', body: 'در پوشه‌ی ربات اجرا کن و توکن CLI رو همون‌جا وارد کن. توکن رو هیچ‌وقت در چت با ایجنت نفرست. در Claude Code می‌تونی بنویسی `! npx tgcloud login`.', code: 'npx tgcloud login' },
         { title: 'دیپلوی و ساخت جدول‌ها', body: '`deploy` کد (و مینی‌اپ ساخته‌شده) رو آپلود می‌کنه؛ `migrate` تغییرات دیتابیس رو اعمال می‌کنه. دیپلوی هیچ‌وقت خودش به دیتابیس دست نمی‌زنه.', code: 'npm run deploy\nnpx tgcloud migrate' },
-        { title: 'امتحان در تلگرام', body: 'به رباتت `/start` بده. لیست دستورها رو در BotFather با `/setcommands` بذار: `start - شروع` و `help - راهنما`. اگر مینی‌اپ داری، آدرسی که `push` چاپ کرد رو در BotFather و در `MINI_APP_URL` فایل `tgcloud/lib/config.js` بذار.' },
+        { title: 'امتحان در تلگرام', body: 'از حساب ادمین به رباتت `/start` بده. همین کار لیست دستورها رو به انگلیسی و فارسی تنظیم می‌کنه. اگر مینی‌اپ داری، آدرسی که `push` چاپ کرد رو در BotFather و در `MINI_APP_URL` فایل `tgcloud/lib/config.js` بذار.' },
         { title: 'دیپلوی خودکار', body: 'پوشه‌ی ربات رو در یک مخزن جدا در گیت‌هاب بذار و سکرت **`TGCLOUD_TOKEN`** رو اضافه کن (Settings ← Secrets and variables ← Actions). از اون به بعد هر push به `main` بیلد، دیپلوی، migrate و webhook sync رو خودش انجام می‌ده.' },
         { title: 'ادامه‌ی ساخت با ایجنت', body: 'پوشه‌ی ربات رو در ایجنتت باز کن و ویژگی بخواه. `AGENTS.md` و `docs/ARCHITECTURE.md` همون پوشه به هر ایجنتی می‌گن کد کجا بره و چطور تست بشه.' },
       ],
@@ -214,7 +214,7 @@ export const content = {
         { q: 'کدوم ایجنت‌ها کار می‌کنن؟', a: 'هر ایجنتی که بتونه فایل بخونه و دستور اجرا کنه. Claude Code از پلاگین و اسکیل‌ها مستقیم استفاده می‌کنه؛ Codex، Cursor، Gemini CLI و Copilot از `AGENTS.md`.' },
         { q: 'باید برنامه‌نویسی بلد باشم؟', a: 'لازم نیست، ولی کمک می‌کنه. ایجنت کد می‌نویسه و تست می‌کنه؛ کار شما توضیح خواسته، لاگین و تأیید تغییراته.' },
         { q: 'لاگ‌ها رو کجا ببینم؟', a: 'خروجی `console` در `npx tgcloud run` دیده می‌شه. برای همین خطاهای مهم (مثل شکست دستورهای ادمین) به ادمین در چت گزارش می‌شن.' },
-        { q: 'متن‌های ربات فقط فارسیه؟', a: 'پیش‌فرض فارسیه. به ایجنت بگو به هر زبانی که می‌خوای تغییرش بده.' },
+        { q: 'ربات به چه زبانی حرف می‌زنه؟', a: 'به‌طور پیش‌فرض انگلیسی، و فارسی هم داره. هر کاربر از دکمه‌ی 🌐 زبانش رو عوض می‌کنه؛ اگه انتخاب نکنه، زبان اپ تلگرامش ملاکه. همه‌ی متن‌ها در `tgcloud/lib/i18n.js` هستن؛ برای زبان سوم به ایجنت بگو یه دیکشنری اضافه کنه.' },
         { q: 'این سایت رو روی فورک خودم چطور بالا بیارم؟', a: 'در فورک: Settings ← Pages ← Source: GitHub Actions. بعد workflow «Deploy site» رو اجرا کن.' },
       ],
     },
@@ -284,7 +284,7 @@ export const content = {
           name: 'tgcloud-bot',
           tag: 'Start here',
           body: 'Turns an empty folder into a complete bot, then builds features on the same architecture.',
-          points: ['User tracking, `/stop` and block detection', '`/start` menu, deep links, multi-step input', 'A back button on every screen, inline and reply keyboards', 'User feedback forwarded to the admin', 'Offline tests on a mock SDK', 'Auto-deploy with GitHub Actions'],
+          points: ['User tracking, `/stop` and block detection', '`/start` menu, deep links, multi-step input', 'A back button on every screen, inline and reply keyboards', 'Bilingual: English (default) and Persian', 'User feedback forwarded to the admin', 'Offline tests on a mock SDK', 'Auto-deploy with GitHub Actions'],
         },
         {
           name: 'tgcloud-endpoints',
@@ -359,7 +359,7 @@ export const content = {
       steps: [
         { title: 'Link it to your bot', body: 'Run this in the bot\'s folder and paste the CLI token there. Never send the token to the agent in chat. In Claude Code you can type `! npx tgcloud login`.', code: 'npx tgcloud login' },
         { title: 'Deploy and create the tables', body: '`deploy` uploads the code (and the built Mini App); `migrate` applies database changes. A deploy never touches the database by itself.', code: 'npm run deploy\nnpx tgcloud migrate' },
-        { title: 'Try it in Telegram', body: 'Send `/start` to your bot. Set the command list in BotFather with `/setcommands`: `start - Start` and `help - Help`. With a Mini App, put the URL `push` printed in BotFather and in `MINI_APP_URL` in `tgcloud/lib/config.js`.' },
+        { title: 'Try it in Telegram', body: 'Send `/start` to your bot from the admin account: that also sets its command list, in English and Persian. With a Mini App, put the URL `push` printed in BotFather and in `MINI_APP_URL` in `tgcloud/lib/config.js`.' },
         { title: 'Deploy automatically', body: 'Put the bot\'s folder in its own GitHub repository and add the secret **`TGCLOUD_TOKEN`** (Settings → Secrets and variables → Actions). From then on every push to `main` builds, deploys, migrates and syncs the webhook.' },
         { title: 'Keep building with your agent', body: 'Open the bot\'s folder in your agent and ask for features. Its `AGENTS.md` and `docs/ARCHITECTURE.md` tell any agent where code goes and how it\'s tested.' },
       ],
@@ -431,7 +431,7 @@ export const content = {
         { q: 'Which agents work?', a: 'Any agent that can read files and run commands. Claude Code uses the plugin and skills directly; Codex, Cursor, Gemini CLI and Copilot go through `AGENTS.md`.' },
         { q: 'Do I need to know how to code?', a: 'Not strictly, but it helps. The agent writes and tests the code; you describe what you want, log in, and review the changes.' },
         { q: 'Where are the logs?', a: '`console` output shows up in `npx tgcloud run`. That\'s why important failures (like a failing admin command) are reported to the admin in the chat.' },
-        { q: 'Is the bot only in Persian?', a: 'Its texts are Persian by default. Ask your agent to switch them to any language.' },
+        { q: 'What language does the bot speak?', a: 'English by default, and Persian too. Each user switches with the 🌐 Language button; until they do, their Telegram app\'s language decides. Every text is in `tgcloud/lib/i18n.js`: ask your agent to add a dictionary for a third language.' },
         { q: 'How do I host this site on my fork?', a: 'In your fork: Settings → Pages → Source: GitHub Actions, then run the "Deploy site" workflow.' },
       ],
     },

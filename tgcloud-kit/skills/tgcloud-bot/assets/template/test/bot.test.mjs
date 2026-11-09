@@ -5,7 +5,8 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { fresh, take, failNext, row, msg, press, membership, ctxOf, ADMIN_ID } from './helpers.mjs';
-import { SCREENS, KEYBOARDS, BACK, screen, showKeyboard } from '../tgcloud/lib/menu.js';
+import { SCREENS, KEYBOARDS, screen, showKeyboard } from '../tgcloud/lib/menu.js';
+import { t, TEXTS, LANGS } from '../tgcloud/lib/i18n.js';
 import { askFor } from '../tgcloud/lib/users.js';
 import message from '../tgcloud/handlers/message.js';
 import callbackQuery from '../tgcloud/handlers/callback_query.js';
@@ -13,6 +14,9 @@ import myChatMember from '../tgcloud/handlers/my_chat_member.js';
 import me from '../tgcloud/endpoints/me.js';
 
 const USER = ADMIN_ID + 1;   // anyone but the admin
+const BACK = t('en', 'back');
+// A message from a user whose Telegram app is in Persian.
+const faMsg = (from, text) => msg(from, text, { from: { id: from, is_bot: false, first_name: `User${from}`, language_code: 'fa' } });
 
 beforeEach(fresh);
 
@@ -35,22 +39,22 @@ test('menu buttons edit the message into the next screen; /help sends it', async
   assert.equal(answer.method, 'answerCallbackQuery');
   assert.equal(edit.method, 'editMessageText');
   assert.equal(edit.params.message_id, 7);
-  assert.match(edit.params.text, /راهنما/);
+  assert.match(edit.params.text, /Help/);
 
   await message(msg(USER, '/help'), {});
   const [help] = take();
   assert.equal(help.params.chat_id, USER);
-  assert.match(help.params.text, /راهنما/);
+  assert.match(help.params.text, /Help/);
 });
 
 test('navigation: every screen except the root has a back button, and every button leads somewhere', () => {
   const roots = Object.entries(SCREENS).filter(([, s]) => !s.parent);
   assert.deepEqual(roots.map(([name]) => name), ['home']);
-  for (const [name, s] of Object.entries(SCREENS)) {
-    const rows = screen(name, { id: USER, first_name: 'U' }).reply_markup.inline_keyboard;
+  for (const [name, s] of Object.entries(SCREENS)) for (const lang of Object.keys(LANGS)) {
+    const rows = screen(name, lang, { id: USER, first_name: 'U' }).reply_markup.inline_keyboard;
     if (s.parent) {
       assert.ok(SCREENS[s.parent], `${name}: parent ${s.parent} doesn't exist`);
-      assert.deepEqual(rows.at(-1), [{ text: BACK, callback_data: `menu:${s.parent}` }], `${name} has no back button`);
+      assert.deepEqual(rows.at(-1), [{ text: t(lang, 'back'), callback_data: `menu:${s.parent}` }], `${name} (${lang}) has no back button`);
     }
     for (const b of rows.flat()) {
       const to = /^menu:(\w+)$/.exec(b.callback_data ?? '')?.[1];
@@ -59,7 +63,7 @@ test('navigation: every screen except the root has a back button, and every butt
   }
   for (const [name, k] of Object.entries(KEYBOARDS)) {
     if (k.parent) assert.ok(KEYBOARDS[k.parent], `keyboard ${name}: parent ${k.parent} doesn't exist`);
-    for (const b of k.rows({ id: USER }).flat()) assert.ok(b.run || KEYBOARDS[b.to], `keyboard ${name}: «${b.text}» leads nowhere`);
+    for (const b of k.rows('en', { id: USER }).flat()) assert.ok(b.run || KEYBOARDS[b.to], `keyboard ${name}: «${b.text}» leads nowhere`);
   }
 });
 
@@ -79,13 +83,13 @@ test('back from a question cancels it and returns to the menu', async () => {
   assert.deepEqual(take(), []);
 });
 
-test('a typed «🔙 بازگشت» also cancels the question; every reply offers a way back', async () => {
+test('a typed «🔙 Back» also cancels the question; every reply offers a way back', async () => {
   await callbackQuery(press(USER, 'menu:feedback'), {});
   take();
   await message(msg(USER, BACK), {});
   const [home] = take();
   assert.equal(home.method, 'sendMessage');
-  assert.match(home.params.text, /چه کاری/);
+  assert.match(home.params.text, /What can I do/);
   await message(msg(USER, 'hello'), {});
   assert.deepEqual(take(), []);
 
@@ -105,7 +109,7 @@ test('back on a message that cannot become text (a photo, a widget) sends the sc
   assert.equal(sent.params.chat_id, USER);
 });
 
-test('reply keyboards: a button opens the next keyboard, «🔙 بازگشت» goes back, also out of a question', async () => {
+test('reply keyboards: a button opens the next keyboard, «🔙 Back» goes back, also out of a question', async () => {
   const asked = [];
   KEYBOARDS.main = { parent: null, text: () => 'main', rows: () => [[{ text: '📦 Products', to: 'products' }]] };
   KEYBOARDS.products = { parent: 'main', text: () => 'products', rows: () => [[{ text: '🔎 Search', run: async (m) => { asked.push(m.text); await askFor(m.from, 'search'); } }]] };
@@ -137,6 +141,66 @@ test('reply keyboards: a button opens the next keyboard, «🔙 بازگشت» g
   }
 });
 
+test('the admin\'s /start sets the command list in every language', async () => {
+  await message(msg(ADMIN_ID, '/start'), {});
+  const calls = take().filter((c) => c.method === 'setMyCommands');
+  assert.deepEqual(calls.map((c) => c.params.language_code), [undefined, 'fa']);   // English is the default list
+  assert.deepEqual(calls[0].params.commands.map((c) => c.command), ['start', 'help']);
+  assert.equal(calls[1].params.commands[0].description, t('fa', 'cmd_start'));
+
+  await message(msg(USER, '/start'), {});   // anyone else: only the menu
+  assert.deepEqual(take().map((c) => c.method), ['sendMessage']);
+});
+
+test('i18n: every language has every text, of the same kind', () => {
+  const keys = Object.keys(TEXTS.en).sort();
+  for (const lang of Object.keys(LANGS)) {
+    assert.deepEqual(Object.keys(TEXTS[lang]).sort(), keys, `${lang} doesn't have the same texts as en`);
+    for (const k of keys) assert.equal(typeof TEXTS[lang][k], typeof TEXTS.en[k], `${lang}.${k}`);
+  }
+});
+
+test('languages: English by default, Persian for a Telegram app in Persian', async () => {
+  await message(msg(USER, '/start'), {});
+  const [en] = take();
+  assert.match(en.params.text, /What can I do/);
+  assert.ok(en.params.reply_markup.inline_keyboard.flat().some((b) => b.text === '📖 Help'));
+
+  await message(faMsg(USER + 1, '/start'), {});
+  const [fa] = take();
+  assert.match(fa.params.text, /چه کاری/);
+  assert.ok(fa.params.reply_markup.inline_keyboard.flat().some((b) => b.text === '📖 راهنما'));
+
+  await message(msg(USER + 2, '/start', { from: { id: USER + 2, is_bot: false, first_name: 'D', language_code: 'de' } }), {});
+  assert.match(take()[0].params.text, /What can I do/);   // a language the bot doesn't have: English
+});
+
+test('languages: the 🌐 screen switches the language, and it sticks', async () => {
+  await message(msg(USER, '/start'), {});
+  take();
+  await callbackQuery(press(USER, 'menu:language', 5), {});
+  const [, picker] = take();
+  const buttons = picker.params.reply_markup.inline_keyboard.flat();
+  assert.ok(buttons.some((b) => b.text === '✅ English'));
+  assert.ok(buttons.some((b) => b.callback_data === 'lang:fa'));
+  assert.deepEqual(picker.params.reply_markup.inline_keyboard.at(-1), [{ text: BACK, callback_data: 'menu:home' }]);
+
+  await callbackQuery(press(USER, 'lang:fa', 5), {});
+  const [, home] = take();
+  assert.equal(home.method, 'editMessageText');
+  assert.match(home.params.text, /چه کاری/);
+  assert.equal(row('SELECT lang FROM users WHERE user_id = ?', USER).lang, 'fa');
+
+  await message(msg(USER, '/help'), {});   // the app is in English, the choice wins
+  assert.match(take()[0].params.text, /راهنما/);
+  await message(msg(USER, t('fa', 'back')), {});   // «🔙 بازگشت» is understood too
+  assert.match(take()[0].params.text, /چه کاری/);
+  assert.equal((await me({}, ctxOf(USER))).lang, 'fa');   // the Mini App follows it
+
+  await callbackQuery(press(USER, 'lang:xx', 5), {});   // not a language: ignored
+  assert.equal(row('SELECT lang FROM users WHERE user_id = ?', USER).lang, 'fa');
+});
+
 test('there are no built-in admin commands: unknown commands get no reply', async () => {
   for (const text of ['/stats', '/backup', '/ping']) {
     await message(msg(ADMIN_ID, text), {});
@@ -166,7 +230,7 @@ test('feedback the admin cannot receive (they never started the bot): the user i
   await message(msg(USER, 'hi'), {});
   const [, sorry] = take();
   assert.equal(sorry.params.chat_id, USER);
-  assert.match(sorry.params.text, /دوباره امتحان کن/);
+  assert.match(sorry.params.text, /try again/);
 });
 
 test('/stop and blocking are recorded', async () => {

@@ -12,13 +12,16 @@ body{margin:0;padding:10px 14px 12px;text-align:center}
 <script>
 const W = window.TelegramWidget, $ = (id) => document.getElementById(id);
 const fmt = new Intl.NumberFormat(navigator.language);
-const ERR = { NOT_ALLOWED: 'برای تغییر، ربات رو باز کن', RATE_LIMITED: 'کمی آهسته‌تر 🙂', TIMEOUT: 'ربات جواب نداد', gone: 'این شمارنده دیگه فعال نیست' };
+const FA = /^fa/i.test(navigator.language);   // the Telegram app's language; English otherwise
+const ERR = FA
+  ? { NOT_ALLOWED: 'برای تغییر، ربات رو باز کن', RATE_LIMITED: 'کمی آهسته‌تر 🙂', TIMEOUT: 'ربات جواب نداد', gone: 'این شمارنده دیگه فعال نیست', other: 'خطا', notSent: 'ارسال نشد: ' }
+  : { NOT_ALLOWED: 'Open the bot to change it', RATE_LIMITED: 'A bit slower 🙂', TIMEOUT: 'The bot didn\'t answer', gone: 'This counter is no longer active', other: 'Error', notSent: 'Not sent: ' };
 let rev = -1;
 function show(text) {
   let d = null;
   try { d = JSON.parse(text); } catch (e) {}
   if (!d) return;
-  if (d.e) return status(ERR[d.e] || 'خطا', true);
+  if (d.e) return status(ERR[d.e] || ERR.other, true);
   if (d.r < rev) return;
   rev = d.r;
   $('n').textContent = fmt.format(d.n);
@@ -37,7 +40,7 @@ for (const b of document.querySelectorAll('button')) {
     busy(true);
     status('…');
     req.then((a) => { status(''); show(a.result); W.HapticFeedback.selectionChanged(); },
-      (e) => status(ERR[e.code] || 'ارسال نشد: ' + e.code, true))
+      (e) => status(ERR[e.code] || ERR.notSent + e.code, true))
       .finally(() => busy(false));
   });
 }

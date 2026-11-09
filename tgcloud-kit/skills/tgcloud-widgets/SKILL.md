@@ -92,7 +92,7 @@ Then wire it up:
    }));
    ```
 2. `tgcloud/handlers/message.js`, public section:
-   `if (text === '/counter') return sendCounter(message.chat.id);`
+   `if (text === '/counter') return sendCounter(message);`
    with `import { sendCounter } from '../lib/widgets/counter.js';`.
 3. `npm run widgets && npm test`. Then `npm run deploy` and
    `npx tgcloud migrate`, and send `/counter` to the bot.
@@ -157,7 +157,7 @@ Rules, the same as for callback_query:
   the DB and write it to the widget at most once a second.
 - Never put secrets in a widget's code or state: forwards carry them.
 - Like every message, a widget has a way back: send it with
-  `reply_markup: { inline_keyboard: [[homeButton()]] }` (or `withBack([], '<screen>')`)
+  `reply_markup: { inline_keyboard: [[homeButton(lang)]] }` (or `withBack(lang, [], '<screen>')`)
   from `lib/menu.js`. Pressing it sends the menu as a new message, because a
   widget can't be edited into text.
 - `copyMessage` / `copyMessages` refuse widget messages. In groups, the bot

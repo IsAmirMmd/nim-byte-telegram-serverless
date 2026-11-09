@@ -190,17 +190,19 @@ export async function sendBackup() {
   }
 }
 
-// /setcommands: the "/" list. Everyone sees the public commands; the admin's
-// own chat also lists the admin ones.
+// /setcommands: the "/" list. Everyone sees the public commands in their
+// language (syncCommands in lib/menu.js, which the admin's /start also runs);
+// the admin's own chat also lists the admin ones (admin texts stay English).
 export async function setCommands() {
-  const everyone = [{ command: 'start', description: 'شروع' }, { command: 'help', description: 'راهنما' }];
-  await api.setMyCommands({ commands: everyone });
+  await syncCommands();
+  const everyone = COMMANDS.map((command) => ({ command, description: t(DEFAULT_LANG, `cmd_${command}`) }));
   await api.setMyCommands({
     scope: { type: 'chat', chat_id: ADMIN_ID },
-    commands: [...everyone, { command: 'stats', description: 'آمار' }, { command: 'backup', description: 'بکاپ CSV' }],
+    commands: [...everyone, { command: 'stats', description: 'Stats' }, { command: 'backup', description: 'CSV backup' }],
   });
   await tell('Commands updated ✅');
 }
+// imports: syncCommands, COMMANDS from './menu.js'; t, DEFAULT_LANG from './i18n.js'
 ```
 
 Tests:

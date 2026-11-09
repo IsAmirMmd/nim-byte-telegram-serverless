@@ -60,11 +60,12 @@ export function shareLink(url, text = '') {
   else window.open(share, '_blank', 'noopener');
 }
 
-// Copies text, or shows it when the clipboard is not available (some Telegram clients).
-export async function copyText(text) {
+// Copies text, or shows it when the clipboard is not available (some Telegram
+// clients). `done`: the "copied" text in the UI's language (t('copied')).
+export async function copyText(text, done = 'Copied') {
   try {
     await navigator.clipboard.writeText(text);
-    await alertDialog('کپی شد');
+    await alertDialog(done);
   } catch {
     await alertDialog(text);
   }

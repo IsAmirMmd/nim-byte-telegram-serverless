@@ -35,7 +35,7 @@ const positional = args.filter((a, i) => !a.startsWith('--') && !['--admin', '--
 const dir = positional[0];
 const adminId = option('--admin') ?? positional[1];   // also: scaffold.mjs <dir> <admin id>
 const miniApp = flag('--mini-app');
-const title = option('--title') ?? 'اپ ربات';
+const title = option('--title') ?? 'Bot app';
 
 if (!dir || !/^\d+$/.test(adminId ?? '')) {
   console.error('Usage: node scaffold.mjs <project-dir> --admin <telegram user id> [--mini-app] [--title "<app title>"] [--no-claude-settings]');
@@ -211,10 +211,10 @@ test in \`test/\` (\`npm test\`, offline); new columns on existing tables are
 nullable; pushing to \`main\` deploys.
 
 **Every action has a way back**: every screen a button (inline or reply
-keyboard) or command opens has «🔙 بازگشت» to the screen before it, and a
-final result has «🏠 منوی اصلی». Add screens to \`tgcloud/lib/menu.js\` with
+keyboard) or command opens has «🔙 Back» to the screen before it, and a
+final result has «🏠 Main menu». Add screens to \`tgcloud/lib/menu.js\` with
 a \`parent\` (the back button is added automatically); keyboards a feature
-builds itself use \`withBack()\`. In the Mini App, every screen but the first
+builds itself use \`withBack(lang, …)\`. In the Mini App, every screen but the first
 calls \`useBackButton(goBack)\`.
 
 The Bot API (10.4) as this project uses it: [docs/BOT-API.md](docs/BOT-API.md):
@@ -258,7 +258,7 @@ Next:
   npx tgcloud login        # link to the bot (interactive: BotFather → bot → Serverless → CLI Access)
   npm run deploy           # push the code${miniApp ? ' (and the built Mini App)' : ''}
   npx tgcloud migrate      # create the tables
-  then send /start to the bot from the admin account, and set the command list
-  in @BotFather → /setcommands:  start - شروع   help - راهنما
+  then send /start to the bot from the admin account (it also sets the command
+  list, in English and Persian)
   Admin tools (npm run sql, /stats, an admin panel…) are not included: ask your
   AI agent to add the ones you need.`);

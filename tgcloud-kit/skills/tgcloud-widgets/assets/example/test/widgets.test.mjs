@@ -26,7 +26,7 @@ test('/counter sends the widget with requests allowed and a zero state', async (
   assert.equal(sent.params.html, COUNTER);
   assert.equal(sent.params.allow_queries, true);
   assert.deepEqual(JSON.parse(sent.params.chat_data), { n: 0, r: 0 });
-  assert.ok(sent.params.caption);
+  assert.equal(sent.params.caption, '🔢 Counter');   // English by default
   assert.equal(sent.params.reply_markup.inline_keyboard[0][0].callback_data, 'menu:home');   // a way back
 });
 

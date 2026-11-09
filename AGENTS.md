@@ -43,11 +43,18 @@ Bots made with it live in their own folders and their own git repositories.
 
 8. **Every action has a way back.** In every bot made with the kit, each
    screen that a button (inline or reply keyboard) or a command opens has a
-   `🔙 بازگشت` button to the screen before it, and a final result has
-   `🏠 منوی اصلی`. Only the root menu has none. The template's `lib/menu.js`
+   `🔙 Back` button to the screen before it, and a final result has
+   `🏠 Main menu`. Only the root menu has none. The template's `lib/menu.js`
    adds the back button from each screen's `parent`. Mini App screens use
    Telegram's BackButton (`useBackButton`). See
    [`patterns.md`](tgcloud-kit/skills/tgcloud-bot/references/patterns.md#menus-as-screens-always-with-a-way-back).
+
+9. **English by default, and bilingual.** Bots made with the kit speak
+   English by default and Persian too: every user-facing text lives in the
+   bot's `tgcloud/lib/i18n.js` (and the Mini App's `src/lib/i18n.js`) in both
+   languages, and users switch in the 🌐 Language screen. Never hard-code user
+   text. The guide site is English by default with Persian as the second
+   language (`site/src/content.js`).
 
 ## Layout
 

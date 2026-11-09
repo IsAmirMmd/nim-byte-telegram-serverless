@@ -41,7 +41,8 @@ tgcloud/                      ← deployed code; the only code the platform sees
     users.js                  ← users table: /start tracking, blocked, /stop, pending_action, profileOf
     feedback.js               ← feedback to the admin + a per-user throttle (bot and Mini App share it)
     access.js                 ← callerId / forbidden() / badInput(); isAdmin / requireAdmin for admin tools
-    menu.js                   ← navigation: inline and reply-keyboard screens, each with an automatic back button
+    menu.js                   ← navigation: inline and reply-keyboard screens, each with an automatic back button; the command list
+    i18n.js                   ← every user-facing text, English (default) and Persian: t(lang, key)
     query.js                  ← pagination, search, ORDER BY, WHERE helpers for list endpoints
     html.js                   ← esc(), link(), fa() for parse_mode HTML texts
     time.js                   ← now(), DAY, local time with a fixed UTC offset
@@ -102,7 +103,7 @@ them when the user asks.
   3. `/stop`;
   4. admin commands, once added (`docs/ADMIN-TOOLS.md`);
   5. public commands (`/help`);
-  6. reply-keyboard buttons and `🔙 بازگشت` (`handleKeyboardText`);
+  6. reply-keyboard buttons and `🔙 Back` (`handleKeyboardText`);
   7. the answer to a pending question;
   8. everything else is ignored, with no reply.
 - **callback_data** is `<feature>:<action>[:<args>]`, at most 64 bytes, for
@@ -119,22 +120,32 @@ them when the user asks.
   `users.start_param` for attribution.
 - **Navigation: every action has a way back.** Any message a button or
   command leads to has a way back to the screen before it: a
-  `🔙 بازگشت` button (or `🏠 منوی اصلی` after a final result such as "sent ✅").
+  `🔙 Back` button (or `🏠 Main menu` after a final result such as "sent ✅").
   Only the root (`home`) has none. This holds for inline buttons and for
   reply-keyboard buttons alike. `lib/menu.js` does it by construction:
   - every screen (`SCREENS` for inline, `KEYBOARDS` for reply keyboards)
     names its `parent`, and the back row is added automatically;
   - a question is a screen too (`enter: (user) => askFor(…)`). Going back
-    from it cancels the question (`cancelPending`). A typed `🔙 بازگشت` does
+    from it cancels the question (`cancelPending`). A typed `🔙 Back` does
     the same;
-  - inline keyboards a feature builds itself end with `withBack(rows, to)` or
-    `backButton(to)`, where `to` is a menu screen or the feature's own
+  - inline keyboards a feature builds itself end with `withBack(lang, rows, to)` or
+    `backButton(lang, to)`, where `to` is a menu screen or the feature's own
     callback_data (`shop:list:2`);
   - if a screen is reached from several places, carry the origin in its
     callback_data (`item:7:list2`), and point back there;
   - a test in `test/bot.test.mjs` fails when a screen's parent or a
     `menu:` button leads nowhere. Every new feature test checks its back
     button.
+- **Languages: English by default, Persian built in.** Every user-facing text
+  lives in `lib/i18n.js` (`TEXTS.en`, `TEXTS.fa`) and is read with
+  `t(lang, 'key')`. Write no user text anywhere else (admin-only texts may stay
+  English). `const lang = await userLang(user)` gives the language: the user's
+  choice in the 🌐 Language screen (`users.lang`), else their Telegram app's
+  `language_code`, else English. A new text is a key in **every** dictionary;
+  a test fails otherwise. A new language is an entry in `LANGS` and `TEXTS`.
+  The Mini App has the same dictionaries in `src/lib/i18n.js`, and follows the
+  bot's choice through `me.lang`. Endpoint errors are written in the caller's
+  language.
 - **Multi-step input**: `askFor(user, 'action:args')` stores
   `users.pending_action`. The next private message is read by `takePending()`,
   which clears the action and expires it after 15 minutes. Call `takePending()`
@@ -151,8 +162,9 @@ only when the user asks, following `docs/ADMIN-TOOLS.md`:
 - admin endpoints for the Mini App, `requireAdmin(ctx)` first;
 - scheduled jobs and secrets.
 
-The `/` suggestions come from BotFather (`/setcommands`) or `setMyCommands`.
-Telegram doesn't pick up new commands by itself.
+The `/` suggestions are set by `syncCommands()` (`lib/menu.js`), in every
+language, each time the admin sends `/start`. A new public command goes in
+`COMMANDS` there, with its `cmd_<name>` text in `lib/i18n.js`.
 
 ### State and configuration
 
@@ -166,10 +178,12 @@ Telegram doesn't pick up new commands by itself.
 ### Texts
 
 - `parse_mode: 'HTML'`, with every user-provided string passed through `esc()`.
-- Numbers go through `fa()` (Persian digits).
-- User-facing copy is in the bot's language. Admin-only messages may be
-  English.
-- Wrap usernames in `<bdi>` in the RTL UI.
+- User-facing copy comes from `lib/i18n.js` in the user's language: English
+  by default, Persian built in (see Routing → Languages). Admin-only messages
+  may be English.
+- Numbers go through `number(lang, n)` from `lib/html.js` (Persian digits for
+  `fa`).
+- Wrap usernames in `<bdi>`, so they read correctly in right-to-left texts.
 
 ### Errors
 
@@ -290,7 +304,7 @@ Setup, once:
   workflows do nothing.
 - After the first deploy:
   - run `npx tgcloud migrate` (or let CI do it);
-  - set the command list in BotFather (`/setcommands`);
+  - send `/start` from the admin account (it sets the command list in every language);
   - set the Mini App URL in BotFather (if there is a Mini App).
 
 Destructive schema changes, anything `--safe` skips, are applied by hand with
