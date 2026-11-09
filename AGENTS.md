@@ -54,7 +54,10 @@ Bots made with it live in their own folders and their own git repositories.
    bot's `tgcloud/lib/i18n.js` (and the Mini App's `src/lib/i18n.js`) in both
    languages, and users switch in the 🌐 Language screen. Never hard-code user
    text. The guide site is English by default with Persian as the second
-   language (`site/src/content.js`).
+   language (`site/src/content.js`), and so is the README (`README.md`,
+   `README.fa.md`): change both when you change one. The bot sets its own
+   command list and Mini App menu button (`syncBotSetup` in `lib/menu.js`):
+   never send the user to BotFather for those.
 
 ## Layout
 

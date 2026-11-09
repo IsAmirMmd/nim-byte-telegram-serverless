@@ -14,8 +14,7 @@
 import { api, BotApiError } from 'sdk';
 import { trackStart, unsubscribe, takePending, askFor, userLang } from '../lib/users.js';
 import { t } from '../lib/i18n.js';
-import { sendHome, sendHelp, handleKeyboardText, withBack, homeButton, syncCommands } from '../lib/menu.js';
-import { ADMIN_ID } from '../lib/config.js';
+import { sendHome, sendHelp, handleKeyboardText, withBack, homeButton, syncBotSetup, syncMenuButton } from '../lib/menu.js';
 import { forwardFeedback, FEEDBACK_MAX } from '../lib/feedback.js';
 
 // /start <payload> from a deep link (t.me/<bot>?start=<payload>): route by
@@ -33,8 +32,11 @@ export default async function (message, ctx) {
 
   if (isPrivate && /^\/start(\s|$)/.test(text)) {
     await trackStart(message);
-    // The admin's /start also (re)sets the command list in every language.
-    if (message.from?.id === ADMIN_ID) await syncCommands().catch(console.error);
+    // Telegram's own setup, so nothing is set by hand in BotFather: the command
+    // list in every language and the Mini App button next to the input field
+    // (only when they changed), then that button in this user's language.
+    await syncBotSetup().catch(console.error);
+    await syncMenuButton(message.chat.id, await userLang(message.from)).catch(console.error);
     const payload = /^\/start\s+(\S+)$/.exec(text)?.[1];
     if (payload && (await startPayload(message, payload))) return;
     return sendHome(message);

@@ -171,8 +171,8 @@ Wrap the results in `Number(...)`.
 
 `handlers/message.js` has a public section (`/help` in the template). Add a
 line there per command, and add it to `COMMANDS` in `lib/menu.js` with its
-`cmd_<name>` text in `lib/i18n.js`: the admin's next `/start` updates the
-command list in every language.
+`cmd_<name>` text in `lib/i18n.js`: after the deploy, the next `/start`
+updates the command list in every language (`syncBotSetup`).
 
 Commands with arguments: `const m = /^\/find\s+(.+)$/.exec(text); if (m) return find(message, m[1]);`.
 To accept a file sent as a reply, use `message.document ?? message.reply_to_message?.document`.

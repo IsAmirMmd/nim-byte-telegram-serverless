@@ -162,9 +162,16 @@ only when the user asks, following `docs/ADMIN-TOOLS.md`:
 - admin endpoints for the Mini App, `requireAdmin(ctx)` first;
 - scheduled jobs and secrets.
 
-The `/` suggestions are set by `syncCommands()` (`lib/menu.js`), in every
-language, each time the admin sends `/start`. A new public command goes in
-`COMMANDS` there, with its `cmd_<name>` text in `lib/i18n.js`.
+The bot sets up Telegram itself, so nothing is set by hand in BotFather.
+`syncBotSetup()` (`lib/menu.js`) runs on `/start` and calls Telegram only when
+something changed (`settings.bot_setup`). It publishes:
+- the `/` suggestions in every language;
+- the default menu button: the Mini App when `MINI_APP_URL` is set, the
+  commands otherwise.
+
+`syncMenuButton()` then sets this user's button in their language, on `/start`
+and on a language switch. A new public command goes in `COMMANDS` there, with
+its `cmd_<name>` text in `lib/i18n.js`.
 
 ### State and configuration
 
@@ -304,8 +311,8 @@ Setup, once:
   workflows do nothing.
 - After the first deploy:
   - run `npx tgcloud migrate` (or let CI do it);
-  - send `/start` from the admin account (it sets the command list in every language);
-  - set the Mini App URL in BotFather (if there is a Mini App).
+  - with a Mini App, put its URL in `MINI_APP_URL` (`lib/config.js`) and deploy;
+  - send `/start`: the bot sets its command list and its Mini App button itself.
 
 Destructive schema changes, anything `--safe` skips, are applied by hand with
 `npx tgcloud migrate`.

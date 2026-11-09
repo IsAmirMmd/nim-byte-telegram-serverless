@@ -5,7 +5,7 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { fresh, take, failNext, row, msg, press, membership, ctxOf, ADMIN_ID } from './helpers.mjs';
-import { SCREENS, KEYBOARDS, screen, showKeyboard } from '../tgcloud/lib/menu.js';
+import { SCREENS, KEYBOARDS, screen, showKeyboard, syncBotSetup, syncMenuButton } from '../tgcloud/lib/menu.js';
 import { t, TEXTS, LANGS } from '../tgcloud/lib/i18n.js';
 import { askFor } from '../tgcloud/lib/users.js';
 import message from '../tgcloud/handlers/message.js';
@@ -22,7 +22,7 @@ beforeEach(fresh);
 
 test('/start records the user, keeps the first deep-link payload, and sends the menu', async () => {
   await message(msg(USER, '/start ref_42'), {});
-  const [sent] = take();
+  const [sent] = take().filter((c) => c.method === 'sendMessage');   // after Telegram's setup calls
   assert.equal(sent.method, 'sendMessage');
   assert.equal(sent.params.chat_id, USER);
   assert.ok(sent.params.reply_markup.inline_keyboard.flat().some((b) => b.callback_data === 'menu:help'));
@@ -141,15 +141,32 @@ test('reply keyboards: a button opens the next keyboard, «🔙 Back» goes back
   }
 });
 
-test('the admin\'s /start sets the command list in every language', async () => {
-  await message(msg(ADMIN_ID, '/start'), {});
-  const calls = take().filter((c) => c.method === 'setMyCommands');
-  assert.deepEqual(calls.map((c) => c.params.language_code), [undefined, 'fa']);   // English is the default list
-  assert.deepEqual(calls[0].params.commands.map((c) => c.command), ['start', 'help']);
-  assert.equal(calls[1].params.commands[0].description, t('fa', 'cmd_start'));
+test('/start sets the command list in every language and the menu button, once per change', async () => {
+  await message(msg(USER, '/start'), {});
+  const first = take();
+  const lists = first.filter((c) => c.method === 'setMyCommands');
+  assert.deepEqual(lists.map((c) => c.params.language_code), [undefined, 'fa']);   // English is the default list
+  assert.deepEqual(lists[0].params.commands.map((c) => c.command), ['start', 'help']);
+  assert.equal(lists[1].params.commands[0].description, t('fa', 'cmd_start'));
+  const menu = first.find((c) => c.method === 'setChatMenuButton');
+  assert.deepEqual(menu.params, { menu_button: { type: 'commands' } });   // no Mini App in this test bot
 
-  await message(msg(USER, '/start'), {});   // anyone else: only the menu
+  await message(msg(USER + 1, '/start'), {});   // nothing changed: only the menu
   assert.deepEqual(take().map((c) => c.method), ['sendMessage']);
+});
+
+test('with a Mini App, the button next to the input opens it, in each user\'s language', async () => {
+  const url = 'https://app1.tgcloud.ai/';
+  assert.equal(await syncBotSetup(url), true);
+  const menu = take().find((c) => c.method === 'setChatMenuButton');
+  assert.deepEqual(menu.params.menu_button, { type: 'web_app', text: t('en', 'menu_button'), web_app: { url } });
+  assert.equal(await syncBotSetup(url), false);   // already set
+  assert.deepEqual(take(), []);
+
+  await syncMenuButton(USER, 'fa', url);
+  const [mine] = take();
+  assert.equal(mine.params.chat_id, USER);
+  assert.equal(mine.params.menu_button.text, t('fa', 'menu_button'));
 });
 
 test('i18n: every language has every text, of the same kind', () => {
@@ -162,7 +179,7 @@ test('i18n: every language has every text, of the same kind', () => {
 
 test('languages: English by default, Persian for a Telegram app in Persian', async () => {
   await message(msg(USER, '/start'), {});
-  const [en] = take();
+  const [en] = take().filter((c) => c.method === 'sendMessage');
   assert.match(en.params.text, /What can I do/);
   assert.ok(en.params.reply_markup.inline_keyboard.flat().some((b) => b.text === '📖 Help'));
 

@@ -88,7 +88,7 @@ The scaffold adds only the missing files. Build new pages on that starter rather
 3b. **English by default, and bilingual.** Every text goes in `src/lib/i18n.js` (`TEXTS.en`, `TEXTS.fa`), read with `const { t, lang } = useI18n(me.data?.lang)`. The language is the one the user chose in the bot (`me.lang`), else the Telegram app's, else English. `useI18n` also sets `<html lang dir>`, so Persian is right-to-left. Write the CSS with logical properties (`padding-inline`, `margin-inline-start`, `text-align: start`) so both directions work. Numbers and dates go through `formatNumber(lang, n)` / `formatDate(lang, unix)`. Endpoint errors arrive already in the user's language.
 4a. **Every screen except the first has a way back.** Call `useBackButton(goBack)` (in the starter's `src/lib/telegram.js`) on each such screen. It shows Telegram's native back button, which returns to the previous screen. The first screen calls `useBackButton(null)`. The same rule holds for the bot's own messages (the tgcloud-bot skill's `lib/menu.js`).
 5. Keep the bundler's `base` at `/`. Never put files under `/api/` in the build output. Don't set `X-Frame-Options` or a restrictive `frame-ancestors`, because Telegram Web loads the app in an iframe.
-6. **Same origin only** (Bot API 10.2, on for every Mini App since July 20, 2026): `Telegram.WebApp` methods work only from the Mini App's own origin, `https://app<app_id>.tgcloud.ai`. Keep every screen on that host. A page on another domain (an external checkout, a redirect, another site in an iframe) can't call them. Set exactly the URL that `push` printed in BotFather. BotFather can turn the protection off, but then the bot is responsible for the app linking to no untrusted site, so leave it on.
+6. **Same origin only** (Bot API 10.2, on for every Mini App since July 20, 2026): `Telegram.WebApp` methods work only from the Mini App's own origin, `https://app<app_id>.tgcloud.ai`. Keep every screen on that host. A page on another domain (an external checkout, a redirect, another site in an iframe) can't call them. Use exactly the URL that `push` printed (in `MINI_APP_URL`; the bot sets its menu button from it). BotFather can turn the protection off, but then the bot is responsible for the app linking to no untrusted site, so leave it on.
 
 ## Step 3: Configure static hosting (`tgcloud.jsonc`)
 
@@ -162,7 +162,7 @@ npx tgcloud migrate      # when schema.js changed
 
 ## Step 7: Open it in Telegram
 
-Copy the URL that `push` printed (`https://app<app_id>.tgcloud.ai/`) and set it in **BotFather** as the bot's Mini App / menu button URL. The Mini App files are also visible under **Serverless** in BotFather. Inline/keyboard buttons can open it too: `{ text: 'Open', web_app: { url } }`.
+Copy the URL that `push` printed (`https://app<app_id>.tgcloud.ai/`) into `MINI_APP_URL` in `tgcloud/lib/config.js` and deploy again. **The bot sets up the rest itself**, with nothing to set in BotFather. On the next `/start`, `syncBotSetup()` / `syncMenuButton()` in `lib/menu.js` put the Mini App button next to the input field (`setChatMenuButton`), labelled in each user's language. The menu's «📱 Open the app» button uses the same URL. The Mini App files are also visible under **Serverless** in BotFather. Other inline or keyboard buttons can open it too: `{ text: t(lang, 'open_app'), web_app: { url } }`.
 
 ## Limits
 

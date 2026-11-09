@@ -7,52 +7,46 @@
 [![License: MIT](https://img.shields.io/github/license/IsAmirMmd/nim-byte-telegram-serverless?style=for-the-badge&color=blue)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/IsAmirMmd/nim-byte-telegram-serverless?style=for-the-badge)](https://github.com/IsAmirMmd/nim-byte-telegram-serverless/commits/main)
 
+**English** · [فارسی](README.fa.md)
+
 </div>
 
-<div dir="rtl">
+**Describe your Telegram bot in one sentence. Your AI agent builds it, tests it and puts it live.**
 
-**با یک جمله به ایجنت هوش مصنوعی، ربات سرورلس تلگرام خودت رو بساز و بالا بیار.**
+This repository is a set of **skills**, a **tested scaffold** and a **complete guide**. Together they teach AI coding agents such as Claude Code, Codex, Cursor, Gemini CLI and GitHub Copilot to build, test and deploy a bot on [Telegram Serverless](https://core.telegram.org/bots/serverless) from scratch. You need no server and no separate database: the code runs on Telegram's own servers, the SQLite database is built in, and the Mini App is hosted next to the bot.
 
-این مخزن مجموعه‌ای از **اسکیل‌ها**، یک **اسکفولد تست‌شده** و یک **راهنمای کامل** است. این‌ها به ایجنت‌هایی مثل Claude Code، Codex، Cursor، Gemini CLI و GitHub Copilot یاد می‌دهند یک ربات روی [Telegram Serverless](https://core.telegram.org/bots/serverless) را از صفر بسازند، تست کنند و دیپلوی کنند. سرور و دیتابیس جدا لازم نیست: کد روی سرورهای خود تلگرام اجرا می‌شود، دیتابیس SQLite داخلی است و مینی‌اپ هم کنار ربات میزبانی می‌شود.
+📖 **Guide site:** https://isamirmmd.github.io/nim-byte-telegram-serverless/
 
-📖 **سایت راهنما:** https://isamirmmd.github.io/nim-byte-telegram-serverless/
+🤖 **Live preview:** [@tgCloudKit_bot](https://t.me/tgCloudKit_bot) is the bot the kit builds right now, Mini App included. It is rebuilt and redeployed whenever the kit changes.
 
-🤖 **پیش‌نمایش زنده:** [@tgCloudKit_bot](https://t.me/tgCloudKit_bot). رباتی که کیت در همین لحظه می‌سازد (همراه با مینی‌اپ). با هر تغییر کیت، از نو ساخته و دیپلوی می‌شود.
+## What's inside
 
-## داخلش چیست
-
-| اسکیل | کارش |
+| Skill | What it does |
 |---|---|
-| **tgcloud-bot** (نقطه‌ی شروع) | یک پوشه‌ی خالی را به یک ربات کامل تبدیل می‌کند: ساختار `tgcloud/` (schema، یک lib برای هر ویژگی، handler و endpoint سبک)، ثبت کاربران، `/stop` و تشخیص بلاک، منوی `/start` که همه‌ی صفحه‌هایش (چه دکمه‌ی شیشه‌ای، چه کیبورد) دکمه‌ی «🔙 بازگشت» دارند، دیپ‌لینک، سؤال‌وجواب چندمرحله‌ای، ارسال نظر به ادمین، تست آفلاین با SDK شبیه‌سازی‌شده و دیپلوی خودکار با GitHub Actions |
-| **tgcloud-endpoints** | مرجع کامل endpointهای مینی‌اپ (`POST /api/<name>`): احراز هویت با `ctx.initData`، خطا، صفحه‌بندی، جستجو، محدودیت درخواست و تست |
-| **tgcloud-mini-app** | مینی‌اپ React + Vite، همراه با تنظیم `tgcloud.jsonc` و دیپلوی. موقع راه‌اندازی، ایجنت می‌پرسد با کدام دیزاین سیستم کار کنید: **پیش‌فرض** (رنگ‌های تم خود تلگرام) یا **دیزاین سیستم خودتان** (لینک سایت یا فیگما، فایل CSS، یک اسکیل دیزاین، کتابخانه‌ای مثل Tailwind یا یک توضیح ساده). انتخاب شما در `docs/DESIGN.md` ربات ذخیره می‌شود |
-| **tgcloud-widgets** | ویجت‌های HTML داخل پیام (Bot API 10.4): بلوک‌های کوچک و تعاملی مثل شمارنده، نظرسنجی زنده، قیمت لحظه‌ای یا یک بازی کوچک. شامل `sendWidget`، هندلر `widget_query`، وضعیت ویجت، پرداخت با کیف پول TON و یک نمونه‌ی تست‌شده |
+| **tgcloud-bot** (start here) | Turns an empty folder into a complete bot. It sets up the `tgcloud/` layout (schema, one lib per feature, thin handlers and endpoints). It comes with user tracking, `/stop` and block detection, and a `/start` menu where every screen has a «🔙 Back» button, inline and reply keyboards alike. It also has deep links, multi-step input, feedback to the admin, offline tests on a mock SDK, and auto-deploy with GitHub Actions. Bots speak **English by default and Persian too**: users switch with a 🌐 Language button. The bot sets its own command list and Mini App button, so there is nothing to set by hand in BotFather |
+| **tgcloud-endpoints** | A complete reference for Mini App endpoints (`POST /api/<name>`): auth from `ctx.initData`, errors, pagination, search, throttling and tests |
+| **tgcloud-mini-app** | A React + Vite Mini App, with `tgcloud.jsonc` and deploy. It is bilingual like the bot and right-to-left in Persian. During setup, the agent asks which design system to use: **Default** (Telegram's own theme colors) or **your own** (a website or Figma link, a CSS file, a design-system skill, a library such as Tailwind, or a plain description). The choice is saved in the bot's `docs/DESIGN.md` |
+| **tgcloud-widgets** | HTML widgets inside messages (Bot API 10.4): small interactive blocks such as a counter, a live poll, a price ticker or a small game. It covers `sendWidget`, the `widget_query` handler, the widget's state and TON wallet payments, with a tested example |
 
-`scripts/create-bot.mjs` هم همه‌ی مراحل ساخت را با یک دستور انجام می‌دهد، حتی بدون هوش مصنوعی.
+`scripts/create-bot.mjs` does every setup step in one command, even without AI.
 
-## پیش‌نیازها
+## Requirements
 
-1. **Node.js 22.12** یا جدیدتر.
-2. **دسترسی به Serverless.** این قابلیت هنوز برای همه فعال نشده و اول باید درخواست بدهید: مینی‌اپ [@BotFather](https://t.me/BotFather) را باز کنید، یک ربات جدید بسازید، وارد بخش **Serverless** همان ربات شوید و از آنجا درخواست بدهید. وقتی BotFather پیام داد که وایت‌لیست شما باز شده، می‌توانید از آن استفاده کنید.
-3. بعد از باز شدن دسترسی، در BotFather: ربات ← **Serverless** ← **CLI Access ← Access token** را کپی کنید (شکلش `app<id>:<secret>` است و با توکن معمولی ربات فرق دارد).
-4. **آیدی عددی** تلگرام خودتان از [@userinfobot](https://t.me/userinfobot).
+1. **Node.js 22.12** or newer.
+2. **Access to Serverless.** It isn't open to everyone yet, so request it first. Open the [@BotFather](https://t.me/BotFather) Mini App, create a new bot, go to its **Serverless** section and request access there. Once BotFather messages you that your whitelist is open, you can use it.
+3. Once you have access, in BotFather go to the bot → **Serverless** → **CLI Access → Access token** and copy the token. It looks like `app<id>:<secret>`, which is different from a normal bot token.
+4. Your **numeric Telegram id**, from [@userinfobot](https://t.me/userinfobot).
 
-## استفاده با ایجنت‌های هوش مصنوعی
+## Using it with AI agents
 
-### Claude Code، به‌صورت پلاگین (یک بار برای همه‌ی پروژه‌ها)
-
-</div>
+### Claude Code, as a plugin (once, for every project)
 
 ```
 /plugin marketplace add IsAmirMmd/nim-byte-telegram-serverless
 /plugin install tgcloud-kit@nim-byte
 ```
 
-<div dir="rtl">
-
-یا از ترمینال:
-
-</div>
+Or from the terminal:
 
 ```bash
 claude plugin marketplace add IsAmirMmd/nim-byte-telegram-serverless
@@ -62,25 +56,17 @@ claude plugin marketplace add IsAmirMmd/nim-byte-telegram-serverless
 claude plugin install tgcloud-kit@nim-byte --scope user
 ```
 
-<div dir="rtl">
-
-بعد در یک پوشه‌ی خالی Claude Code را باز کنید و بنویسید:
-
-</div>
+Then open Claude Code in an empty folder and type:
 
 ```
-/tgcloud-kit:tgcloud-bot 123456789 یه ربات ثبت سفارش کافه با مینی‌اپ
+/tgcloud-kit:tgcloud-bot 123456789 a café ordering bot with a Mini App
 ```
 
-<div dir="rtl">
+To update: `claude plugin update tgcloud-kit@nim-byte`.
 
-به‌روزرسانی: `claude plugin update tgcloud-kit@nim-byte`.
+### Claude Code, by cloning this repository
 
-### Claude Code، با کلون کردن همین مخزن
-
-اسکیل‌ها در `.claude/skills/` هستند و با باز کردن مخزن خودکار شناخته می‌شوند:
-
-</div>
+The skills are in `.claude/skills/`, and Claude Code finds them when you open the repository:
 
 ```bash
 git clone https://github.com/IsAmirMmd/nim-byte-telegram-serverless
@@ -89,104 +75,80 @@ claude
 ```
 
 ```
-/tgcloud-bot 123456789 یه ربات نوبت‌دهی آرایشگاه با مینی‌اپ
+/tgcloud-bot 123456789 a barbershop booking bot with a Mini App
 ```
 
-<div dir="rtl">
+The bot is created in its own folder next to this repository (for example `../barber-bot`), because it becomes its own git repository.
 
-ربات در یک پوشه‌ی جدا کنار این مخزن ساخته می‌شود (مثلاً `../barber-bot`)، چون خودش یک مخزن گیت جداست.
+### Codex, Cursor, Gemini CLI, GitHub Copilot and others
 
-### Codex، Cursor، Gemini CLI، GitHub Copilot و بقیه
-
-هر ایجنتی که بتواند فایل بخواند و دستور اجرا کند کافی است. مخزن را کلون کنید، ایجنت را داخلش باز کنید و بگویید:
-
-</div>
+Any agent that can read files and run commands works. Clone the repository, open your agent in it and say:
 
 ```
-فایل AGENTS.md رو بخون و طبقش برام یه ربات سرورلس تلگرام بساز که سفارش غذا بگیره و پنل مینی‌اپ داشته باشه. آیدی عددی من 123456789 است.
+Read AGENTS.md and, following it, build me a Telegram serverless bot that takes food orders and has a Mini App panel. My numeric id is 123456789.
 ```
 
-<div dir="rtl">
+`AGENTS.md` tells the agent which skill to read, where to create the bot, and what it may do only with your permission. Codex, Cursor and Copilot read the file on their own. For Gemini CLI, the sentence above is enough.
 
-`AGENTS.md` به ایجنت می‌گوید کدام اسکیل را بخواند، ربات را کجا بسازد و چه کارهایی را فقط با اجازه‌ی شما انجام دهد. Codex و Cursor و Copilot این فایل را خودشان می‌خوانند. برای Gemini CLI همان جمله‌ی بالا کافی است.
+### Without AI
 
-### بدون هوش مصنوعی
-
-یک دستور، بدون نیاز به کلون: `tgcloud init`، اسکفولد، نصب و اجرای تست‌ها.
-
-</div>
+One command, no clone needed. It runs `tgcloud init`, the scaffold, the install and the tests:
 
 ```bash
 npx github:IsAmirMmd/nim-byte-telegram-serverless my-bot --admin 123456789 --mini-app
 ```
 
-<div dir="rtl">
-
-یا از داخل مخزن کلون‌شده:
-
-</div>
+Or from the cloned repository:
 
 ```bash
 node scripts/create-bot.mjs ../my-bot --admin 123456789 --mini-app
 ```
 
-<div dir="rtl">
+Without `--mini-app` you get only the bot. `--help` lists every option.
 
-بدون `--mini-app` فقط خود ربات ساخته می‌شود. `--help` همه‌ی گزینه‌ها را نشان می‌دهد.
+## Setting up the bot once the project exists
 
-## راه‌اندازی ربات بعد از ساخته شدن پروژه
+Run every command in the **bot's folder**.
 
-همه‌ی دستورها در **پوشه‌ی ربات** اجرا می‌شوند.
+1. **Link it to your bot.** Enter the CLI token here, and never send it to an agent in a chat. In Claude Code you can type `! npx tgcloud login`.
 
-۱. **اتصال به ربات.** توکن CLI را همین‌جا وارد کنید و هیچ‌وقت در چت برای ایجنت نفرستید. در Claude Code می‌توانید بنویسید `! npx tgcloud login`.
+   ```bash
+   npx tgcloud login
+   ```
 
-</div>
+2. **Deploy and create the tables.** A deploy never touches the database: schema changes are applied with `migrate`.
 
-```bash
-npx tgcloud login
-```
+   ```bash
+   npm run deploy
+   ```
 
-<div dir="rtl">
+   ```bash
+   npx tgcloud migrate
+   ```
 
-۲. **دیپلوی و ساخت جدول‌ها.** دیپلوی هیچ‌وقت خودش به دیتابیس دست نمی‌زند و تغییرات schema با `migrate` اعمال می‌شوند.
+3. **Try it in Telegram.** Send `/start` to the bot. The bot sets up its command list (in English and Persian) and the Mini App button next to the input field by itself, so there is nothing to set in BotFather. With a Mini App, put the URL that `push` printed (`https://app<id>.tgcloud.ai/`) in `MINI_APP_URL` in `tgcloud/lib/config.js` and deploy again.
 
-</div>
+4. **Auto-deploy.** Put the bot's folder in its own GitHub repository and add the **`TGCLOUD_TOKEN`** secret (Settings → Secrets and variables → Actions). From then on, every push to `main` runs build, push, `migrate --safe` and `webhook sync`, in that order.
 
-```bash
-npm run deploy
-```
+5. **Keep building.** Open the bot's folder in your agent and ask for features. The folder's `AGENTS.md` and `docs/ARCHITECTURE.md` tell any agent where code goes and how it's tested.
 
-```bash
-npx tgcloud migrate
-```
+## Bot commands
 
-<div dir="rtl">
-
-۳. **امتحان در تلگرام.** به ربات `/start` بدهید. لیست دستورها را در BotFather با `/setcommands` بگذارید (`start - شروع` و `help - راهنما`). اگر مینی‌اپ دارید، آدرسی را که `push` چاپ کرد (`https://app<id>.tgcloud.ai/`) در BotFather و در `MINI_APP_URL` فایل `tgcloud/lib/config.js` بگذارید.
-
-۴. **دیپلوی خودکار.** پوشه‌ی ربات را در یک مخزن جدا در گیت‌هاب بگذارید و سکرت **`TGCLOUD_TOKEN`** را اضافه کنید (Settings ← Secrets and variables ← Actions). از آن به بعد هر push به `main` به ترتیب build، push، `migrate --safe` و `webhook sync` را انجام می‌دهد.
-
-۵. **ادامه‌ی ساخت.** پوشه‌ی ربات را در ایجنت باز کنید و ویژگی بخواهید. `AGENTS.md` و `docs/ARCHITECTURE.md` همان پوشه به هر ایجنتی می‌گویند کد کجا برود و چطور تست شود.
-
-## دستورهای اجرای ربات
-
-| دستور | کارش |
+| Command | What it does |
 |---|---|
-| `npm install` | نصب وابستگی‌ها (یک بار) |
-| `npm test` | تست‌های آفلاین روی SDK شبیه‌سازی‌شده؛ بدون شبکه و بدون دیپلوی |
-| `npx tgcloud login` | اتصال پروژه به ربات با توکن CLI (یک بار) |
-| `npm run deploy` | بیلد مینی‌اپ (اگر هست) و آپلود کد |
-| `npx tgcloud migrate` | اعمال تغییرات `tgcloud/schema.js` روی دیتابیس |
-| `npx tgcloud status` | چه چیزی محلی تغییر کرده و هنوز روی ابر نیست |
-| `npx tgcloud run <module> '<input>'` | اجرای یک handler یا endpoint روی ابر با دیتابیس و Bot API واقعی، بدون دیپلوی |
-| `npx tgcloud webhook` | وضعیت وب‌هوک؛ با `npx tgcloud webhook sync` درست می‌شود |
-| `npx tgcloud pull` | هم‌سان کردن پروژه‌ی محلی با چیزی که روی ابر است |
-| `npm run dev` | اجرای مینی‌اپ در مرورگر (فراخوانی endpointها فقط داخل تلگرام کار می‌کند) |
-| `npm run build` | بیلد مینی‌اپ در `dist/` |
+| `npm install` | Install the dependencies (once) |
+| `npm test` | Offline tests on the mock SDK: no network, no deploy |
+| `npx tgcloud login` | Link the project to the bot with the CLI token (once) |
+| `npm run deploy` | Build the Mini App (if there is one) and upload the code |
+| `npx tgcloud migrate` | Apply the changes in `tgcloud/schema.js` to the database |
+| `npx tgcloud status` | What changed locally and isn't in the cloud yet |
+| `npx tgcloud run <module> '<input>'` | Run a handler or an endpoint in the cloud against the real database and Bot API, without deploying |
+| `npx tgcloud webhook` | The webhook's state. `npx tgcloud webhook sync` fixes it |
+| `npx tgcloud pull` | Bring the local project in line with what's in the cloud |
+| `npm run dev` | Run the Mini App in a browser (endpoint calls only work inside Telegram) |
+| `npm run build` | Build the Mini App into `dist/` |
 
-نمونه‌ی `tgcloud run`:
-
-</div>
+`tgcloud run` examples:
 
 ```bash
 npx tgcloud run handlers/message '{ text: "/start", from: { id: 123456789 }, chat: { id: 123456789, type: "private" } }'
@@ -196,23 +158,30 @@ npx tgcloud run handlers/message '{ text: "/start", from: { id: 123456789 }, cha
 npx tgcloud run endpoints/me '{}' --ctx '{ initData: { user: { id: 123456789 } } }'
 ```
 
-<div dir="rtl">
+## Languages
 
-## ابزار ادمین، فقط وقتی بخواهید
+Bots made with the kit speak **English by default and Persian too**. Every user-facing text lives in the bot's `tgcloud/lib/i18n.js`, in both languages, and the Mini App has the same dictionaries in `src/lib/i18n.js`. A user's language is decided in this order:
+1. the language they chose with the bot's 🌐 Language button;
+2. otherwise, their Telegram app's language (Persian for `fa`);
+3. otherwise, English.
 
-قالب ربات **هیچ مسیر یا دستور ادمینی ندارد**: نه `/api/sql`، نه `/stats` و `/backup`، نه پنل ادمین و نه کار زمان‌بندی‌شده. این ابزارها قدرتمندند، پس هر ربات فقط همان‌هایی را می‌گیرد که صاحبش بخواهد. کافی است به ایجنت بگویید. روش امن ساخت هرکدام در `docs/ADMIN-TOOLS.md` هر ربات (و در [`admin-tools.md`](tgcloud-kit/skills/tgcloud-bot/references/admin-tools.md)) آمده است: بررسی `requireAdmin` در خط اول، تست برای کاربر غیرمجاز و گزارش خطا به ادمین.
+The Mini App follows the same choice and switches to right-to-left in Persian. The command list and the Mini App button are set in each language too. For a third language, ask your agent to add a dictionary.
 
-| به ایجنت بگویید | چه اضافه می‌شود |
+The guide site is bilingual too: English by default, Persian one click away.
+
+## Admin tools, only when you ask
+
+The bot template has **no admin routes or commands**: no `/api/sql`, no `/stats` or `/backup`, no admin panel and no scheduled job. These tools are powerful, so each bot gets only the ones its owner asks for. Just tell your agent. How to build each one safely is in every bot's `docs/ADMIN-TOOLS.md` (and in [`admin-tools.md`](tgcloud-kit/skills/tgcloud-bot/references/admin-tools.md)): a `requireAdmin` check on the first line, a test for a refused caller, and failures reported to the admin.
+
+| Tell your agent | What gets added |
 |---|---|
-| «برام `npm run sql` رو اضافه کن» | یک endpoint فقط‌ادمین و یک اسکریپت ترمینال برای کوئری مستقیم دیتابیس |
-| «دستورهای `/stats` و `/backup` برای ادمین بساز» | آمار کاربران و بکاپ CSV در چت ادمین، با گزارش خطا |
-| «یه پنل ادمین در مینی‌اپ با لیست کاربران بساز» | endpointهای ادمین با `requireAdmin` و جدول صفحه‌بندی‌شده |
-| «هر روز ساعت ۹ صبح گزارش بفرست» | یک دستور ادمین و یک کار زمان‌بندی‌شده در GitHub Actions |
-| «کلید API فلان سرویس رو ذخیره کن» | دستور `/setkey` که کلید را در جدول `settings` نگه می‌دارد |
+| "Add `npm run sql`" | An admin-only endpoint and a terminal script to query the database directly |
+| "Add `/stats` and `/backup` for the admin" | User stats and a CSV backup in the admin's chat, with error reports |
+| "Build an admin panel in the Mini App with the user list" | Admin endpoints with `requireAdmin` and a paginated table |
+| "Send me a report every day at 9 a.m." | An admin command and a scheduled job on GitHub Actions |
+| "Store the API key for this service" | A `/setkey` command that keeps the key in the `settings` table |
 
-بعد از اضافه شدن `npm run sql`:
-
-</div>
+Once `npm run sql` is added:
 
 ```bash
 npm run sql -- "SELECT * FROM users ORDER BY first_seen_at DESC LIMIT 5"
@@ -222,20 +191,16 @@ npm run sql -- "SELECT * FROM users ORDER BY first_seen_at DESC LIMIT 5"
 npm run sql -- "SELECT name FROM sqlite_master WHERE type = 'table'"
 ```
 
-<div dir="rtl">
+Put double quotes around the query and single quotes around values. Writes (UPDATE and DELETE) are real and can't be undone, so run a SELECT with the same WHERE first.
 
-دور کوئری دابل‌کوتیشن و دور مقدارها سینگل‌کوتیشن بگذارید. نوشتن (UPDATE و DELETE) واقعی و بی‌بازگشت است، پس اول با همان WHERE یک SELECT بگیرید.
+## Security
 
-## امنیت
+- **No admin routes by default.** A fresh bot exposes only `me` (and, with the Mini App, `feedback`, which is throttled).
+- **The CLI token** stays only in `.tgcloud/` (gitignored) and in the `TGCLOUD_TOKEN` GitHub secret. It never goes in the code, the docs, or a chat with an agent.
+- **Identity comes only from Telegram.** Endpoints know the user only from `ctx.initData.user`, which the platform verifies. Any Mini App user can call any endpoint, so inputs are validated and requests are throttled.
+- **Secrets** (API keys) stay in the `settings` table and never go into a backup or an export.
 
-- **بدون مسیر ادمین پیش‌فرض.** ربات تازه فقط `me` را باز می‌کند (و با مینی‌اپ، `feedback` را که محدودیت درخواست دارد).
-- **توکن CLI** فقط در `.tgcloud/` (داخل gitignore) و سکرت `TGCLOUD_TOKEN` گیت‌هاب می‌ماند؛ نه در کد، نه در مستندات، نه در چت با ایجنت.
-- **هویت فقط از تلگرام.** endpointها کاربر را فقط از `ctx.initData.user` که پلتفرم تأییدش کرده می‌شناسند. هر کاربر مینی‌اپ می‌تواند هر endpointی را صدا بزند، پس ورودی‌ها اعتبارسنجی و درخواست‌ها محدود می‌شوند.
-- **سکرت‌ها** (کلیدهای API) در جدول `settings` می‌مانند و هیچ‌وقت در بکاپ یا خروجی نمی‌آیند.
-
-## ساختار مخزن
-
-</div>
+## Repository layout
 
 ```
 nim-byte-telegram-serverless/
@@ -251,40 +216,33 @@ nim-byte-telegram-serverless/
 ├─ .claude/skills/                  ← pointers: the skills work when the repo is cloned
 ├─ AGENTS.md, CLAUDE.md             ← instructions for any AI agent
 ├─ scripts/create-bot.mjs           ← one command: init + scaffold + install + tests
-├─ site/                            ← the guide site (React + Vite, fa + en)
+├─ site/                            ← the guide site (React + Vite, en + fa)
+├─ README.md, README.fa.md          ← this guide, in English and Persian
 └─ .github/workflows/
    ├─ pages.yml                     ← deploys site/ to GitHub Pages
    ├─ kit.yml                       ← creates a bot from the kit and runs its tests
    └─ preview.yml                   ← deploys the kit's bot to @tgCloudKit_bot (live preview)
 ```
 
-<div dir="rtl">
-
-رباتی که ساخته می‌شود این ساختار را دارد:
-
-</div>
+A bot made with the kit looks like this:
 
 ```
 my-bot/
-├─ tgcloud/            ← schema.js, handlers/, endpoints/, lib/ (the code Telegram runs)
+├─ tgcloud/            ← schema.js, handlers/, endpoints/, lib/ (the code Telegram runs; texts in lib/i18n.js)
 ├─ src/, index.html    ← the Mini App (with --mini-app)
 ├─ test/               ← offline tests on a mock SDK
-├─ docs/               ← ARCHITECTURE.md, ADMIN-TOOLS.md, tgcloud-sdk.md
+├─ docs/               ← ARCHITECTURE.md, ADMIN-TOOLS.md, BOT-API.md, tgcloud-sdk.md
 ├─ .github/workflows/deploy.yml
 ├─ AGENTS.md
 └─ tgcloud.jsonc
 ```
 
-<div dir="rtl">
+## The guide site
 
-## سایت راهنما
+The site in `site/` is built with React and Vite and has no back end. On every push to `main` that changes `site/`, the `pages.yml` workflow publishes it to GitHub Pages.
 
-سایت در `site/` با React و Vite ساخته شده و بک‌اند ندارد. با هر push به `main` که `site/` را تغییر دهد، workflow ‏`pages.yml` آن را روی GitHub Pages منتشر می‌کند.
-
-- **یک بار تنظیم:** Settings ← Pages ← Build and deployment ← Source: **GitHub Actions**. بعد از Actions، workflow ‏«Deploy site» را اجرا کنید.
-- **اجرای محلی:**
-
-</div>
+- **One-time setup:** Settings → Pages → Build and deployment → Source: **GitHub Actions**. Then run the "Deploy site" workflow from Actions.
+- **Run it locally:**
 
 ```bash
 npm --prefix site install
@@ -294,70 +252,17 @@ npm --prefix site install
 npm --prefix site run dev
 ```
 
-<div dir="rtl">
+The site's texts (English and Persian) are in `site/src/content.js`. The same Pages setting is enough in a fork, because the site is built with relative paths.
 
-متن‌های سایت (فارسی و انگلیسی) در `site/src/content.js` هستند. در فورک‌ها هم همین تنظیم Pages کافی است، چون سایت با مسیر نسبی ساخته می‌شود.
+## Live preview
 
-## پیش‌نمایش زنده
+[@tgCloudKit_bot](https://t.me/tgCloudKit_bot) is exactly the bot that `scripts/create-bot.mjs --mini-app` creates. On every push to `main` that changes the kit, the `preview.yml` workflow:
+1. creates a fresh bot from the kit and runs its tests. If a test fails, nothing is deployed;
+2. builds the Mini App;
+3. deploys the bot with `push`, `migrate --safe` and `webhook sync`, then checks that the cloud runs exactly that code.
 
-[@tgCloudKit_bot](https://t.me/tgCloudKit_bot) همان رباتی است که `scripts/create-bot.mjs --mini-app` می‌سازد. با هر push به `main` که کیت را تغییر دهد، workflow ‏`preview.yml` این کارها را انجام می‌دهد:
-1. یک ربات تازه از کیت می‌سازد و تست‌هایش را اجرا می‌کند. اگر تستی رد شود، دیپلوی انجام نمی‌شود.
-2. مینی‌اپ را بیلد می‌کند.
-3. ربات را با `push`، ‏`migrate --safe` و `webhook sync` دیپلوی می‌کند و بررسی می‌کند که ابر دقیقاً همان کد را اجرا کند.
+The token and the admin id are kept only in the repository's `preview` environment (the `PREVIEW_TGCLOUD_TOKEN` secret and the `PREVIEW_ADMIN_ID` variable), and that environment is limited to the `main` branch. Forks can't reach them: secrets aren't copied to forks, the workflow doesn't run outside this repository, and it never runs for pull requests.
 
-توکن و آیدی ادمین فقط در environment ‏`preview` مخزن نگه داشته می‌شوند (secret ‏`PREVIEW_TGCLOUD_TOKEN` و variable ‏`PREVIEW_ADMIN_ID`) و این environment فقط به برنچ `main` دسترسی دارد. فورک‌ها به آن‌ها دسترسی ندارند: secretها در فورک کپی نمی‌شوند، این workflow بیرون از همین مخزن اجرا نمی‌شود و برای pull request هم اجرا نمی‌شود.
+## License
 
-## لایسنس
-
-[MIT](LICENSE). استفاده، تغییر، فورک و انتشار آزاد است، چه شخصی و چه تجاری. فقط متن لایسنس و نام سازنده را در کپی‌ها نگه دارید.
-
-</div>
-
----
-
-## English
-
-**tgcloud-kit** is a set of skills, a tested scaffold and a guide that teach AI coding agents (Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, …) to build, test and deploy Telegram bots on [Telegram Serverless](https://core.telegram.org/bots/serverless). Guide site: https://isamirmmd.github.io/nim-byte-telegram-serverless/
-
-**You need:** Node.js 22.12+, access to Telegram Serverless, the bot's **CLI Access → Access token** from BotFather, and your numeric Telegram id (@userinfobot).
-
-Serverless isn't open to everyone yet. Request access first: open the @BotFather Mini App, create a new bot, go to its **Serverless** section and request access there. Once BotFather messages you that your whitelist is open, you can use it.
-
-**Design system:** when a bot gets a Mini App, the agent asks which design system to use: **Default** (Telegram's own theme colors) or **your own** (a website or Figma link, a CSS/tokens file, a design-system skill, a UI library, or a description). The choice is saved in the bot's `docs/DESIGN.md`.
-
-**Claude Code plugin:**
-
-```
-/plugin marketplace add IsAmirMmd/nim-byte-telegram-serverless
-/plugin install tgcloud-kit@nim-byte
-```
-
-Then, in an empty folder: `/tgcloud-kit:tgcloud-bot <your id> <what the bot does>`.
-
-**Clone and open in any agent:** `git clone https://github.com/IsAmirMmd/nim-byte-telegram-serverless`, open your agent in it, and say *"Read AGENTS.md and build me a Telegram serverless bot that … My numeric id is …"*. In Claude Code, `/tgcloud-bot <id> <what it does>` works directly.
-
-**Without AI:**
-
-```bash
-npx github:IsAmirMmd/nim-byte-telegram-serverless my-bot --admin 123456789 --mini-app
-```
-
-**Run the bot** (in the bot's folder):
-
-```bash
-npx tgcloud login      # paste the CLI token here, never in a chat
-npm run deploy         # build the Mini App (if any) and upload the code
-npx tgcloud migrate    # create / update the database tables
-npm test               # offline tests on the mock SDK
-npx tgcloud status     # local changes not yet in the cloud
-```
-
-Then send `/start` to the bot and set its commands in BotFather (`/setcommands`). For deploy on every push to `main`, put the bot in its own GitHub repo and add the `TGCLOUD_TOKEN` secret.
-
-**Admin tools are built only on request.** The template has no admin routes or commands (no `/api/sql`, `/stats`, `/backup`, admin panel or cron job). Ask your agent ("add `npm run sql`", "add `/stats` and `/backup`", "build an admin panel", "send me a report every morning") and it follows [`admin-tools.md`](tgcloud-kit/skills/tgcloud-bot/references/admin-tools.md): `requireAdmin` first, a refused-caller test, failures reported to the admin. Once added: `npm run sql -- "SELECT * FROM users LIMIT 5"`.
-
-**Live preview:** [@tgCloudKit_bot](https://t.me/tgCloudKit_bot) runs exactly what `scripts/create-bot.mjs --mini-app` creates. `preview.yml` rebuilds, tests and deploys it on every push to `main` that changes the kit. Its token and admin id live only in the `preview` environment (limited to `main`), so forks and pull requests never see them.
-
-**Guide site:** `site/` (React + Vite). Enable it once with Settings → Pages → Source: GitHub Actions; `pages.yml` deploys it on every push to `main`.
-
-**License:** [MIT](LICENSE). Use, change, fork and publish it freely, personally or commercially; keep the license text and copyright notice in copies.
+[MIT](LICENSE). Use, change, fork and publish it freely, personally or commercially. Just keep the license text and the copyright notice in copies.

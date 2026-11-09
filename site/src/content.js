@@ -142,7 +142,7 @@ export const content = {
       steps: [
         { title: 'اتصال به ربات', body: 'در پوشه‌ی ربات اجرا کن و توکن CLI رو همون‌جا وارد کن. توکن رو هیچ‌وقت در چت با ایجنت نفرست. در Claude Code می‌تونی بنویسی `! npx tgcloud login`.', code: 'npx tgcloud login' },
         { title: 'دیپلوی و ساخت جدول‌ها', body: '`deploy` کد (و مینی‌اپ ساخته‌شده) رو آپلود می‌کنه؛ `migrate` تغییرات دیتابیس رو اعمال می‌کنه. دیپلوی هیچ‌وقت خودش به دیتابیس دست نمی‌زنه.', code: 'npm run deploy\nnpx tgcloud migrate' },
-        { title: 'امتحان در تلگرام', body: 'از حساب ادمین به رباتت `/start` بده. همین کار لیست دستورها رو به انگلیسی و فارسی تنظیم می‌کنه. اگر مینی‌اپ داری، آدرسی که `push` چاپ کرد رو در BotFather و در `MINI_APP_URL` فایل `tgcloud/lib/config.js` بذار.' },
+        { title: 'امتحان در تلگرام', body: 'به رباتت `/start` بده. ربات خودش لیست دستورها (انگلیسی و فارسی) و دکمه‌ی مینی‌اپ کنار ورودی پیام رو تنظیم می‌کنه؛ توی BotFather کاری لازم نیست. اگر مینی‌اپ داری، آدرسی که `push` چاپ کرد رو در `MINI_APP_URL` فایل `tgcloud/lib/config.js` بذار و دوباره دیپلوی کن.' },
         { title: 'دیپلوی خودکار', body: 'پوشه‌ی ربات رو در یک مخزن جدا در گیت‌هاب بذار و سکرت **`TGCLOUD_TOKEN`** رو اضافه کن (Settings ← Secrets and variables ← Actions). از اون به بعد هر push به `main` بیلد، دیپلوی، migrate و webhook sync رو خودش انجام می‌ده.' },
         { title: 'ادامه‌ی ساخت با ایجنت', body: 'پوشه‌ی ربات رو در ایجنتت باز کن و ویژگی بخواه. `AGENTS.md` و `docs/ARCHITECTURE.md` همون پوشه به هر ایجنتی می‌گن کد کجا بره و چطور تست بشه.' },
       ],
@@ -359,7 +359,7 @@ export const content = {
       steps: [
         { title: 'Link it to your bot', body: 'Run this in the bot\'s folder and paste the CLI token there. Never send the token to the agent in chat. In Claude Code you can type `! npx tgcloud login`.', code: 'npx tgcloud login' },
         { title: 'Deploy and create the tables', body: '`deploy` uploads the code (and the built Mini App); `migrate` applies database changes. A deploy never touches the database by itself.', code: 'npm run deploy\nnpx tgcloud migrate' },
-        { title: 'Try it in Telegram', body: 'Send `/start` to your bot from the admin account: that also sets its command list, in English and Persian. With a Mini App, put the URL `push` printed in BotFather and in `MINI_APP_URL` in `tgcloud/lib/config.js`.' },
+        { title: 'Try it in Telegram', body: 'Send `/start` to your bot. It sets up its command list (English and Persian) and the Mini App button next to the input field by itself: there is nothing to set in BotFather. With a Mini App, put the URL `push` printed in `MINI_APP_URL` in `tgcloud/lib/config.js` and deploy again.' },
         { title: 'Deploy automatically', body: 'Put the bot\'s folder in its own GitHub repository and add the secret **`TGCLOUD_TOKEN`** (Settings → Secrets and variables → Actions). From then on every push to `main` builds, deploys, migrates and syncs the webhook.' },
         { title: 'Keep building with your agent', body: 'Open the bot\'s folder in your agent and ask for features. Its `AGENTS.md` and `docs/ARCHITECTURE.md` tell any agent where code goes and how it\'s tested.' },
       ],

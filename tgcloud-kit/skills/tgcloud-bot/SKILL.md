@@ -119,11 +119,16 @@ npm run deploy                        # push the code (builds the Mini App first
 npx tgcloud migrate                   # create the tables (interactive; or `npx tgcloud migrate --safe`)
 ```
 
-Then the admin sends `/start` to the bot, which also sets its command list in
-English and Persian (`syncCommands()`), so there is nothing to set with
-`/setcommands`. With a Mini App, set the URL
-that `push` printed in BotFather (menu button / Mini App) and in
-`MINI_APP_URL` (`lib/config.js`).
+Then the admin sends `/start` to the bot. **The bot sets up Telegram by
+itself** (`syncBotSetup()` in `lib/menu.js`), so nothing is set by hand in
+BotFather:
+- the command list, in English and Persian (`setMyCommands` with `language_code`);
+- the Mini App button next to the input field (`setChatMenuButton`), in each
+  user's language.
+
+It calls Telegram only when something changed. With a Mini App, put the URL
+that `push` printed in `MINI_APP_URL` (`lib/config.js`) and deploy: the next
+`/start` shows the button.
 
 ## Step 4: Build the features
 

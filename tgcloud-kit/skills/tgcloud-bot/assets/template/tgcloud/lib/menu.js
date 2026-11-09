@@ -19,6 +19,7 @@ import { sql } from 'sdk/db';
 import { MINI_APP_URL } from './config.js';
 import { askFor, cancelPending, userLang, setLang } from './users.js';
 import { t, inAnyLang, LANGS, DEFAULT_LANG } from './i18n.js';
+import { getSetting, setSetting } from './settings.js';
 
 // A back button for any inline keyboard: to a menu screen ('help'), or to a
 // feature's own screen by its callback_data ('shop:list:2').
@@ -28,19 +29,39 @@ export const homeButton = (lang) => ({ text: t(lang, 'home'), callback_data: 'me
 // Rows of buttons plus the back row: use it for every inline keyboard a feature sends.
 export const withBack = (lang, rows, to = 'home') => ({ inline_keyboard: [...rows, [backButton(lang, to)]] });
 
-// The command list Telegram suggests, in every language: English for everyone,
-// plus one list per other language (shown to users whose app is in it).
-// Runs when the admin sends /start (handlers/message.js), so there is nothing to
-// set in BotFather. A new public command: add it here and its text in lib/i18n.js.
+// ---------- Telegram's own setup: nothing is set by hand in BotFather ----------
+
+// The public commands Telegram suggests after "/". A new one: add it here and
+// its `cmd_<name>` text in lib/i18n.js; the next /start publishes it.
 export const COMMANDS = ['start', 'help'];
 
-export async function syncCommands() {
-  for (const lang of Object.keys(LANGS)) {
-    await api.setMyCommands({
-      commands: COMMANDS.map((command) => ({ command, description: t(lang, `cmd_${command}`) })),
-      ...(lang === DEFAULT_LANG ? {} : { language_code: lang }),
-    });
+// The command list in every language (English for everyone, plus one list per
+// other language for users whose app is in it) and the default menu button: the
+// Mini App next to the input field when MINI_APP_URL is set, the "/" commands
+// otherwise. Runs on /start (handlers/message.js), but calls Telegram only when
+// something changed since the last time (settings 'bot_setup'): after a deploy
+// with new commands, texts or a new MINI_APP_URL.
+export async function syncBotSetup(url = MINI_APP_URL) {
+  const lists = Object.keys(LANGS).map((lang) => ({
+    lang,
+    commands: COMMANDS.map((command) => ({ command, description: t(lang, `cmd_${command}`) })),
+  }));
+  const menu = url ? { type: 'web_app', text: t(DEFAULT_LANG, 'menu_button'), web_app: { url } } : { type: 'commands' };
+  const signature = JSON.stringify({ lists, menu });
+  if ((await getSetting('bot_setup')) === signature) return false;
+  for (const { lang, commands } of lists) {
+    await api.setMyCommands({ commands, ...(lang === DEFAULT_LANG ? {} : { language_code: lang }) });
   }
+  await api.setChatMenuButton({ menu_button: menu });
+  await setSetting('bot_setup', signature);
+  return true;
+}
+
+// The Mini App button next to this user's input field, in their language. Runs
+// on their /start and when they switch languages. Nothing without a Mini App.
+export async function syncMenuButton(chatId, lang, url = MINI_APP_URL) {
+  if (!url) return;
+  await api.setChatMenuButton({ chat_id: chatId, menu_button: { type: 'web_app', text: t(lang, 'menu_button'), web_app: { url } } });
 }
 
 // ---------- inline screens ----------
@@ -120,6 +141,7 @@ export async function handleMenuCallback(query) {
   if (m[1] === 'lang') {
     await setLang(query.from, m[2]);
     name = 'home';   // the menu again, now in the chosen language
+    if (query.message?.chat.type === 'private') await syncMenuButton(query.message.chat.id, m[2]).catch(console.error);
   }
   await SCREENS[name].enter?.(query.from);
   if (query.message) await editInto(query, name);
