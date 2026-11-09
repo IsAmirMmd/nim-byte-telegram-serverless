@@ -34,6 +34,20 @@ export const press = (from, data, messageId = 1) => ({
   message: { message_id: messageId, chat: { id: from, type: 'private' }, text: '…' },
 });
 
+// A request from a widget the bot sent to `from` (TelegramWidget.request(data)):
+// the widget_query payload. A forwarded shared widget sends shared_widget_query
+// instead: { id, from, type, data, widget_id }, without chat or message_id.
+export const widgetQuery = (from, data, messageId = 1, extra = {}) => ({
+  id: `w${Math.random()}`,
+  from: user(from),
+  chat: { id: from, type: 'private' },
+  message_id: messageId,
+  chat_instance: String(from),
+  type: { type: 'data' },
+  data,
+  ...extra,
+});
+
 // my_chat_member in a private chat: `status` 'kicked' = blocked the bot, 'member' = unblocked.
 export const membership = (from, status) => ({
   chat: { id: from, type: 'private' },

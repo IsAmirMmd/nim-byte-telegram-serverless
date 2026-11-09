@@ -24,6 +24,7 @@
 | **tgcloud-bot** (نقطه‌ی شروع) | یک پوشه‌ی خالی را به یک ربات کامل تبدیل می‌کند: ساختار `tgcloud/` (schema، یک lib برای هر ویژگی، handler و endpoint سبک)، ثبت کاربران، `/stop` و تشخیص بلاک، منوی `/start`، دیپ‌لینک، سؤال‌وجواب چندمرحله‌ای، ارسال نظر به ادمین، تست آفلاین با SDK شبیه‌سازی‌شده و دیپلوی خودکار با GitHub Actions |
 | **tgcloud-endpoints** | مرجع کامل endpointهای مینی‌اپ (`POST /api/<name>`): احراز هویت با `ctx.initData`، خطا، صفحه‌بندی، جستجو، محدودیت درخواست و تست |
 | **tgcloud-mini-app** | مینی‌اپ React + Vite، همراه با تنظیم `tgcloud.jsonc` و دیپلوی. موقع راه‌اندازی، ایجنت می‌پرسد با کدام دیزاین سیستم کار کنید: **پیش‌فرض** (رنگ‌های تم خود تلگرام) یا **دیزاین سیستم خودتان** (لینک سایت یا فیگما، فایل CSS، یک اسکیل دیزاین، کتابخانه‌ای مثل Tailwind یا یک توضیح ساده). انتخاب شما در `docs/DESIGN.md` ربات ذخیره می‌شود |
+| **tgcloud-widgets** | ویجت‌های HTML داخل پیام (Bot API 10.4): بلوک‌های کوچک و تعاملی مثل شمارنده، نظرسنجی زنده، قیمت لحظه‌ای یا یک بازی کوچک. شامل `sendWidget`، هندلر `widget_query`، وضعیت ویجت، پرداخت با کیف پول TON و یک نمونه‌ی تست‌شده |
 
 `scripts/create-bot.mjs` هم همه‌ی مراحل ساخت را با یک دستور انجام می‌دهد، حتی بدون هوش مصنوعی.
 
@@ -239,10 +240,11 @@ nim-byte-telegram-serverless/
 ├─ tgcloud-kit/                     ← the Claude Code plugin
 │  ├─ .claude-plugin/plugin.json
 │  └─ skills/
-│     ├─ tgcloud-bot/               ← SKILL.md, references/ (architecture, patterns, admin-tools),
+│     ├─ tgcloud-bot/               ← SKILL.md, references/ (architecture, patterns, admin-tools, bot-api),
 │     │                               scripts/scaffold.mjs, assets/template/
 │     ├─ tgcloud-endpoints/         ← SKILL.md
-│     └─ tgcloud-mini-app/          ← SKILL.md, references/recipes.md, assets/app/ (React starter)
+│     ├─ tgcloud-mini-app/          ← SKILL.md, references/recipes.md, assets/app/ (React starter)
+│     └─ tgcloud-widgets/           ← SKILL.md, references/widget-runtime.md, scripts/widgets.mjs, assets/example/
 ├─ .claude-plugin/marketplace.json  ← makes this repo a plugin marketplace ("nim-byte")
 ├─ .claude/skills/                  ← pointers: the skills work when the repo is cloned
 ├─ AGENTS.md, CLAUDE.md             ← instructions for any AI agent

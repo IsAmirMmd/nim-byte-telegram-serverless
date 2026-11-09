@@ -13,12 +13,19 @@ in [references/architecture.md](references/architecture.md). Read it before
 writing feature code. The scaffold also copies it into the project as
 `docs/ARCHITECTURE.md`.
 
+The Bot API is at **10.4** (November 2026).
+[references/bot-api.md](references/bot-api.md) lists every update type (one
+handler file each) and the newer features: ephemeral messages, rich messages,
+streaming drafts, disabled buttons, guest mode, widgets. Read it before using
+a Bot API feature you're unsure of. The project gets a copy as `docs/BOT-API.md`.
+
 Sibling skills in this kit:
 
 | Skill | Use it for |
 |---|---|
 | **tgcloud-endpoints** | Writing Mini App endpoints: auth, errors, pagination |
 | **tgcloud-mini-app** | The React front-end: wiring, styling with the Telegram theme, deploy |
+| **tgcloud-widgets** | HTML widgets inside messages (Bot API 10.4): sendWidget, `widget_query`, the widget's state |
 
 ## Step 1: Inputs
 
@@ -75,8 +82,8 @@ only replaces the stock `init` versions of `schema.js` and
   - `endpoints/`: `me` (the caller's own profile)
 - `test/` (a mock SDK on node:sqlite)
 - `.github/workflows/deploy.yml`
-- `docs/ARCHITECTURE.md` and `docs/ADMIN-TOOLS.md`, plus a pointer section in
-  `AGENTS.md`
+- `docs/ARCHITECTURE.md`, `docs/ADMIN-TOOLS.md` and `docs/BOT-API.md`, plus a
+  pointer section in `AGENTS.md`
 - npm scripts (`test`, `deploy`, `migrate`, `status`, …)
 - `.claude/settings.json`, which enables this kit for the project. Pass
   `--no-claude-settings` to skip it.
@@ -134,14 +141,19 @@ Follow the architecture. Summary:
    - Deep links: `startPayload()`.
    - A question and its answer: `askFor()` / `takePending()`.
    - Mini App calls: `endpoints/<name>.js`. Use the tgcloud-endpoints skill.
+   - Other update types (reactions, join requests, payments, …): a new
+     `handlers/<type>.js`. The types are listed in
+     [references/bot-api.md](references/bot-api.md).
+   - Interactive messages (a live counter, a poll, a small game): widgets,
+     with the tgcloud-widgets skill.
 4. **Tests**: `test/<feature>.test.mjs` with the helpers (`msg`, `press`,
    `ctxOf`, `take`, `failNext`, `row`). Run `npm test`. See the existing
    tests for the shape.
 5. **Check in the cloud** when the Bot API's real behavior matters:
    `npx tgcloud run handlers/message '{ text: "/help", from: { id: <ADMIN_ID> }, chat: { id: <ADMIN_ID>, type: "private" } }'`.
 
-Code patterns (buttons, upserts, files, channel posts, deep links) are in
-[references/patterns.md](references/patterns.md).
+Code patterns (buttons, upserts, files, channel posts, deep links, ephemeral
+replies) are in [references/patterns.md](references/patterns.md).
 
 Rules that break bots most often (AGENTS.md has the full list):
 - Relative imports **with `.js`**. Import the SDK by name. No npm packages,
@@ -189,7 +201,8 @@ For a project with its own `tgcloud/schema.js`, the scaffold runs in
 **existing-project mode** and leaves `tgcloud/` alone. It only adds:
 - `.github/workflows/deploy.yml`;
 - the test harness (`test/sdk/`, `test/helpers.mjs`);
-- `docs/ARCHITECTURE.md`, `docs/ADMIN-TOOLS.md` and the `AGENTS.md` section;
+- `docs/ARCHITECTURE.md`, `docs/ADMIN-TOOLS.md`, `docs/BOT-API.md` and the
+  `AGENTS.md` section;
 - the npm scripts that are missing (existing ones are kept);
 - `.claude/settings.json`.
 

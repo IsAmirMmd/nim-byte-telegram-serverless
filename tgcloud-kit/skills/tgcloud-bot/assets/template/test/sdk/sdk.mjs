@@ -41,9 +41,16 @@ let nextMessageId = 1000;
 export const mockApi = (method, fn) => returns.set(method, fn);
 export const failNext = (method, code, description, when = null) => failures.push({ method, code, description, when });
 
-// Sensible defaults: send*/copyMessage return a message, getMe a bot.
+// Sensible defaults: send*/copyMessage return a message, getMe a bot,
+// sendWidget a message with its widget (and an id when is_shared).
 const defaults = {
   getMe: () => ({ id: 1, is_bot: true, first_name: 'Test bot', username: 'test_bot' }),
+  sendWidget: (p) => {
+    const message_id = nextMessageId++;
+    const widget = { html: p.html, width: p.width, height: p.height, public_data: p.public_data, chat_data: p.chat_data };
+    if (p.is_shared) widget.id = `shared${message_id}`;
+    return { message_id, chat: { id: p.chat_id }, date: Math.floor(Date.now() / 1000), widget };
+  },
 };
 
 export function resetApi() {
